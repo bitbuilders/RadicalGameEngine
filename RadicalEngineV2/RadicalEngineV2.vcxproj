@@ -186,6 +186,10 @@
     </ClCompile>
     <ClCompile Include="timer.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Resources\Shaders\basic.fs" />
+    <None Include="..\Resources\Shaders\basic.vs" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

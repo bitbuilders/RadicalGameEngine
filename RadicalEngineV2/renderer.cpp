@@ -42,7 +42,9 @@ bool Renderer::Initialize()
 	const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
 	m_window = glfwCreateWindow(videoMode->width, videoMode->height, "computer graphics", monitor, nullptr);
 #else
-	m_window = glfwCreateWindow(640, 480, "computer graphics", nullptr, nullptr);
+	Renderer::m_width = 800;
+	Renderer::m_height = 600;
+	m_window = glfwCreateWindow(Renderer::m_width, Renderer::m_height, "computer graphics", nullptr, nullptr);
 #endif // FULLSCREEN
 	if (!m_window)
 	{
@@ -52,8 +54,6 @@ bool Renderer::Initialize()
 	glfwMakeContextCurrent(m_window);
 	glfwSetWindowSizeCallback(m_window, resize_callback);
 
-	Renderer::m_width = 640;
-	Renderer::m_height = 480;
 
 	if (!gladLoadGL())
 	{

@@ -125,7 +125,7 @@ void Scene02::Shutdown()
 
 void Scene02::UpdateCursor()
 {
-	Input::eButtonState state = m_engine->Get<Input>()->GetButton("click");
+	//Input::eButtonState state = m_engine->Get<Input>()->GetButton("click");
 
 	float x = m_engine->Get<Input>()->GetAnalogAbsolute("x-axis");
 	float y = m_engine->Get<Input>()->GetAnalogAbsolute("y-axis");

@@ -11,7 +11,7 @@ int Renderer::m_height = 0;
 void resize_callback(GLFWwindow* window, int width, int height)
 {
 	Renderer::m_width = width;
-	Renderer::m_width = width;
+	Renderer::m_height = height;
 }
 
 Renderer::Renderer(Engine* engine) : System(engine)

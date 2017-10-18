@@ -22,6 +22,9 @@
     <Filter Include="Resource Files\Resources\Textures">
       <UniqueIdentifier>{be95f195-1b59-4ad9-b932-3622b5a5005b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{d8b353d9-e617-479c-90c5-6288398a8847}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -55,10 +58,13 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="scene01.h">
-      <Filter>Header Files</Filter>
+      <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="scene02.h">
-      <Filter>Header Files</Filter>
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="scene03.h">
+      <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -86,11 +92,14 @@
     <ClCompile Include="scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scene01.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="scene02.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="scene01.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="scene03.cpp">
+      <Filter>Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -101,6 +110,9 @@
       <Filter>Resource Files\Resources\Shaders</Filter>
     </None>
     <None Include="..\Resources\Shaders\transform.vs">
+      <Filter>Resource Files\Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Resources\Shaders\vertexlight.vs">
       <Filter>Resource Files\Resources\Shaders</Filter>
     </None>
   </ItemGroup>

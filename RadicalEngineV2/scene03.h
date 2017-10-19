@@ -43,7 +43,7 @@ private:
 	light m_light;
 
 	float m_rotation;
-	float m_rotationSpeed = 35.0f;
+	float m_rotationSpeed = 10.0f;
 
 	GLuint m_vaoHandle;
 };

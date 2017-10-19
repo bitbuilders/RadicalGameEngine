@@ -107,7 +107,6 @@ bool Scene03::Initialize()
 	glVertexAttribBinding(0, 0);
 	glVertexAttribFormat(1, 3, GL_FLOAT, GL_FALSE, 0);
 	glVertexAttribBinding(1, 1);
-
 	
 	m_cube.mxModelViewUniform = glGetUniformLocation(m_cube.shaderProgram, "mxModelView");
 	m_cube.mxMVPUniform = glGetUniformLocation(m_cube.shaderProgram, "mxMVP");
@@ -143,36 +142,44 @@ void Scene03::Shutdown()
 void Scene03::UpdateCube()
 {
 	// Ambient Color
-	glm::vec3 ambientMaterial = glm::vec3(0.0f, 0.2f, 0.3f);
+	glm::vec3 ambientMaterial = glm::vec3(0.0f, 0.1f, 0.2f);
 	glUniform3fv(m_cube.ambientMaterialUniform, 1, &ambientMaterial[0]);
 
 	// Model Matrix
-	m_rotation += m_engine->Get<Timer>()->FrameTime();
+	m_rotation += m_rotationSpeed * m_engine->Get<Timer>()->FrameTime();
 	glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), m_rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4 mxModel = translate * rotate;
 
 	glm::mat4 mxView = glm::lookAt(glm::vec3(0.0f, 1.0f, 1.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	
-	float aspect = m_engine->Get<Renderer>()->m_width / m_engine->Get<Renderer>()->m_height;
+	float aspect = ((float)m_engine->Get<Renderer>()->m_width / (float)m_engine->Get<Renderer>()->m_height);
 	glm::mat4 mxProjection = glm::perspective(90.0f, aspect, 0.1f, 1000.0f);
 
 	glm::mat4 mxModelView = mxView * mxModel;
-	glUniform4fv(m_cube.mxModelViewUniform, 1, &mxModelView[0][0]);
+	glUniformMatrix4fv(m_cube.mxModelViewUniform, 1, GL_FALSE, &mxModelView[0][0]);
 
 	glm::mat4 mvp = mxProjection * mxView * mxModel;
-	glUniform4fv(m_cube.mxMVPUniform, 1, &mvp[0][0]);
+	glUniformMatrix4fv(m_cube.mxMVPUniform, 1, GL_FALSE, &mvp[0][0]);
 
+	// Normals
 	glm::mat3 mxNormal = glm::mat3(mxModelView);
 	mxNormal = glm::inverse(mxNormal);
 	mxNormal = glm::transpose(mxNormal);
 	glUniformMatrix3fv(m_cube.mxNormalUniform, 1, GL_FALSE, &mxNormal[0][0]);
 
+	// Light Position and Color
 	glm::vec3 lightPosition = mxView * glm::vec4(2.0f, 10.0f, 10.0f, 1.0f);
-	glUniform4fv(m_light.positionUniform, 1, &lightPosition[0]);
+	glUniformMatrix4fv(m_light.positionUniform, 1, GL_FALSE, &lightPosition[0]);
 
 	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 	glUniform3fv(m_light.colorUniform, 1, &lightColor[0]);
 
-	//std::cout << m_cube.mxNormalUniform << std::endl;
+	// Diffuse Light
+	glm::vec3 diffuseMaterial = glm::vec3(0.0f, 0.5f, 0.75f);
+	glUniform3fv(m_cube.diffuseMaterialUniform, 1, &diffuseMaterial[0]);
+
+	// Specular Light
+	glm::vec3 specularMaterial = glm::vec3(1.0f, 1.0f, 1.0f);
+	glUniform3fv(m_cube.specularMaterialUniform, 1, &specularMaterial[0]);
 }

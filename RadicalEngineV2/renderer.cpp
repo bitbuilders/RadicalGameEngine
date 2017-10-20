@@ -12,6 +12,7 @@ void resize_callback(GLFWwindow* window, int width, int height)
 {
 	Renderer::m_width = width;
 	Renderer::m_height = height;
+	glViewport(0, 0, Renderer::m_width, Renderer::m_height);
 }
 
 Renderer::Renderer(Engine* engine) : System(engine)

@@ -115,5 +115,11 @@
     <None Include="..\Resources\Shaders\vertexlight.vs">
       <Filter>Resource Files\Resources\Shaders</Filter>
     </None>
+    <None Include="..\Resources\Shaders\phong.fs">
+      <Filter>Resource Files\Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Resources\Shaders\phong.vs">
+      <Filter>Resource Files\Resources\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

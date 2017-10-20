@@ -197,6 +197,8 @@
   <ItemGroup>
     <None Include="..\Resources\Shaders\basic.fs" />
     <None Include="..\Resources\Shaders\basic.vs" />
+    <None Include="..\Resources\Shaders\phong.fs" />
+    <None Include="..\Resources\Shaders\phong.vs" />
     <None Include="..\Resources\Shaders\transform.vs" />
     <None Include="..\Resources\Shaders\vertexlight.vs" />
   </ItemGroup>

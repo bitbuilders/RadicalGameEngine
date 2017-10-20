@@ -6,6 +6,8 @@
 #include "timer.h"
 #include <iostream>
 
+#define PHONG
+
 namespace
 {
 	float vertexData[] =
@@ -72,7 +74,11 @@ Scene03::~Scene03()
 
 bool Scene03::Initialize()
 {
+	#ifdef PHONG
+	m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\phong.vs", "..\\Resources\\Shaders\\phong.fs");
+	#else
 	m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\vertexlight.vs", "..\\Resources\\Shaders\\basic.fs");
+	#endif
 
 	//GLuint vboHandles[3];
 	//glGenBuffers(3, vboHandles);
@@ -148,7 +154,7 @@ void Scene03::UpdateCube()
 	// Model Matrix
 	m_rotation += m_rotationSpeed * m_engine->Get<Timer>()->FrameTime();
 	glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), m_rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), m_rotation, glm::vec3(1.0f, 0.0f, 0.0f));
 	glm::mat4 mxModel = translate * rotate;
 
 	glm::mat4 mxView = glm::lookAt(glm::vec3(0.0f, 1.0f, 1.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -169,7 +175,7 @@ void Scene03::UpdateCube()
 	glUniformMatrix3fv(m_cube.mxNormalUniform, 1, GL_FALSE, &mxNormal[0][0]);
 
 	// Light Position and Color
-	glm::vec3 lightPosition = mxView * glm::vec4(2.0f, 10.0f, 10.0f, 1.0f);
+	glm::vec3 lightPosition = mxView * glm::vec4(0.0f, 0.0f, 5.0f, 1.0f);
 	glUniformMatrix4fv(m_light.positionUniform, 1, GL_FALSE, &lightPosition[0]);
 
 	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);

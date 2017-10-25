@@ -7,7 +7,7 @@
 #include "image.h"
 #include <iostream>
 
-#define PHONG
+#define TEXTURED
 
 namespace
 {
@@ -122,9 +122,13 @@ Scene04::~Scene04()
 
 bool Scene04::Initialize()
 {
+#ifdef TEXTURED
+	m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\texturedphong.vs", "..\\Resources\\Shaders\\texturedphong.fs");
+#endif
 #ifdef PHONG
 	m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\phong.vs", "..\\Resources\\Shaders\\phong.fs");
-#else
+#endif
+#ifdef BASIC
 	m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\vertexlight.vs", "..\\Resources\\Shaders\\basic.fs");
 #endif
 
@@ -152,9 +156,10 @@ bool Scene04::Initialize()
 	glEnableVertexAttribArray(2);
 
 	auto uvSize = sizeof(GLfloat) * 2;
-	glBindVertexBuffer(0, vboHandle, 0, sizeof(glm::vec3) * 2 + uvSize);
-	glBindVertexBuffer(1, vboHandle, sizeof(glm::vec3), sizeof(glm::vec3) * 2 + uvSize);
-	glBindVertexBuffer(2, vboHandle, sizeof(glm::vec3) + uvSize, sizeof(glm::vec3) * 2 + uvSize);
+	auto posNormSize = sizeof(glm::vec3) * 2;
+	glBindVertexBuffer(0, vboHandle, 0, posNormSize + uvSize);
+	glBindVertexBuffer(1, vboHandle, sizeof(glm::vec3), posNormSize + uvSize);
+	glBindVertexBuffer(2, vboHandle, posNormSize, posNormSize + uvSize);
 
 	//glBindVertexBuffer(0, vboHandles[POSITION], 0, sizeof(glm::vec3));
 	//glBindVertexBuffer(1, vboHandles[COLOR], 0, sizeof(glm::vec3));
@@ -164,7 +169,7 @@ bool Scene04::Initialize()
 	glVertexAttribBinding(0, 0);
 	glVertexAttribFormat(1, 3, GL_FLOAT, GL_FALSE, 0);
 	glVertexAttribBinding(1, 1);
-	glVertexAttribFormat(2, 3, GL_FLOAT, GL_FALSE, 0);
+	glVertexAttribFormat(2, 2, GL_FLOAT, GL_FALSE, 0);
 	glVertexAttribBinding(2, 2);
 
 	m_cube.mxModelViewUniform = glGetUniformLocation(m_cube.shaderProgram, "mxModelView");
@@ -175,8 +180,11 @@ bool Scene04::Initialize()
 	m_cube.diffuseMaterialUniform = glGetUniformLocation(m_cube.shaderProgram, "diffuseMaterial");
 	m_cube.specularMaterialUniform = glGetUniformLocation(m_cube.shaderProgram, "specularMaterial");
 
+	m_cube.samplerUniform = glGetUniformLocation(m_cube.shaderProgram, "textureSampler");
+
 	m_light.positionUniform = glGetUniformLocation(m_cube.shaderProgram, "lightPosition");
 	m_light.colorUniform = glGetUniformLocation(m_cube.shaderProgram, "lightColor");
+
 	//std::cout << m_cube.mxMVPUniform << std::endl;
 
 	int width;
@@ -184,11 +192,29 @@ bool Scene04::Initialize()
 	int bpp;
 	const unsigned char* data = Image::LoadBMP("../Resources/Textures/crate.bmp", width, height, bpp);
 
-	glActiveTexture(GL_TEXTURE0);
+	//GLuint textureBuffer;
+	glActiveTexture(GL_TEXTURE0 + 0);
+	glGenTextures(1, &m_textureLoc);
+	glBindTexture(GL_TEXTURE_2D, m_textureLoc);
 
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, width, height);
+	if (bpp == 24)
+	{
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB, width, height);
 
-	glTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, width, height, GL_RGB8, GL_UNSIGNED_INT_8_8_8_8, data);
+		glTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+		//glTextureStorage2D(m_textureLoc, 1, GL_RGB, width, height);
+
+		//glTextureSubImage2D(m_textureLoc, 1, 0, 0, width, height, GL_RGB8, GL_UNSIGNED_BYTE, data);
+	}
+	else if (bpp == 32)
+	{
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, width, height);
+
+		glTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, width, height, GL_RGBA8, GL_UNSIGNED_INT, data);
+	}
+
+	//glBindTexture(GL_TEXTURE_2D, data);
 
 	delete[] data;
 
@@ -198,6 +224,9 @@ bool Scene04::Initialize()
 void Scene04::Update()
 {
 	UpdateCube();
+	glActiveTexture(GL_TEXTURE0 + 0);
+	glBindTexture(GL_TEXTURE_2D, m_textureLoc);
+	glUniform1i(m_cube.samplerUniform, 0);
 }
 
 void Scene04::Render()

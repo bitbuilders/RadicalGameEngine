@@ -31,6 +31,9 @@ private:
 		GLint ambientMaterialUniform;
 		GLint diffuseMaterialUniform;
 		GLint specularMaterialUniform;
+
+		// sampler
+		GLint samplerUniform;
 	};
 
 	struct light
@@ -46,5 +49,7 @@ private:
 	float m_rotationSpeed = 10.0f;
 
 	GLuint m_vaoHandle;
+
+	GLuint m_textureLoc;
 };
 

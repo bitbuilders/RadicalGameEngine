@@ -28,7 +28,7 @@ const unsigned char * Image::LoadBMP(const std::string & filename, int & width, 
 
 		width = *(int*)&(header[18]);
 		height = *(int*)&(header[22]);
-		bpp = *(int*)&(header[28]);
+		bpp = *(short*)&(header[28]);
 
 		const int bytesPerPixel = (bpp / 8);
 		int size = bytesPerPixel * width * height;
@@ -44,12 +44,12 @@ const unsigned char * Image::LoadBMP(const std::string & filename, int & width, 
 		//fread(data, sizeof(unsigned char), size, file);
 		fclose(file);
 
-		//for (int i = 0; i < size; i += 3)
-		//{
-		//	unsigned char tmp = data[i];
-		//	data[i] = data[i + 2];
-		//	data[i + 2] = tmp;
-		//}
+		for (int i = 0; i < size; i += bytesPerPixel)
+		{
+			unsigned char tmp = data[i];
+			data[i] = data[i + 2];
+			data[i + 2] = tmp;
+		}
 
 		return data;
 	}

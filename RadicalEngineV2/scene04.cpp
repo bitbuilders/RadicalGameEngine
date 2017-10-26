@@ -205,12 +205,16 @@ bool Scene04::Initialize()
 	glTexImage2D(GL_TEXTURE_2D, 0, texImageFormat, width, height, 0, texImageFormat, GL_UNSIGNED_BYTE, data);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 
 	int width2;
 	int height2;
 	int bpp2;
-	const unsigned char* data2 = Image::LoadBMP("../Resources/Textures/swirl_effect.bmp", width2, height2, bpp2);
+	const unsigned char* data2 = Image::LoadBMP("../Resources/Textures/led_strips_MonaLisa.bmp", width2, height2, bpp2);
 
 	glActiveTexture(GL_TEXTURE0 + 1);
 	glGenTextures(1, &m_textureImage2);
@@ -243,10 +247,10 @@ bool Scene04::Initialize()
 	//glBindSampler(m_textureImage, m_cube.samplerUniform);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 	//float color[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 	//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);

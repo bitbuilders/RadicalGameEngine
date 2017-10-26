@@ -41,12 +41,14 @@ void main()
 		specular = lightColor * specularMaterial * specularIntensity;
 	}
 
-	 vec4 texel0 = texture(textureSampler, outVertexTexCoord);
-     vec4 texel1 = texture(textureSampler2, outVertexTexCoord);
+	vec4 texel0 = texture(textureSampler, outVertexTexCoord);
+    vec4 texel1 = texture(textureSampler2, outVertexTexCoord);
 
-	vec4 fragTexColor = mix(texel0, texel1, 0.4);
+	vec4 fragTexColor = mix(texel0, texel1, 0.5);
+	//vec4 fragTexColor = texel0;
 	//vec4 fragTexColor = texture(textureSampler, outVertexTexCoord);
 
-	outVertexColor = fragTexColor * vec4(ambient + diffuse, 1.0) + vec4(specular, 1.0); 
-	//outVertexColor = fragTexColor;
+	//outVertexColor = fragTexColor * vec4(ambient + diffuse, 1.0) + vec4(specular, 1.0); 
+	outVertexColor = fragTexColor;
+	//outVertexColor = vec4(1.0, 1.0, 0.0, 0.0);
 }

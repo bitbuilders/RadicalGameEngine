@@ -50,6 +50,6 @@ private:
 
 	GLuint m_vaoHandle;
 
-	GLuint m_textureLoc;
+	GLuint m_textureImage;
 };
 

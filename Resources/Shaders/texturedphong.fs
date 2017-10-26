@@ -1,4 +1,4 @@
-#version 410
+#version 430
 
 in vec4 outFragPosition;
 in vec3 outFragNormal;
@@ -6,7 +6,7 @@ in vec2 outVertexTexCoord;
 
 layout (location=0) out vec4 outFragmentColor;
 
-//layout (location=0) uniform vec3 textureImage;
+layout (binding=0) uniform sampler2D textureSampler;
 
 uniform vec3 ambientMaterial;
 uniform vec3 diffuseMaterial;
@@ -15,7 +15,6 @@ uniform vec3 specularMaterial;
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
 
-uniform sampler2D textureSampler;
 
 out vec4 outVertexColor;
 
@@ -40,7 +39,7 @@ void main()
 		specular = lightColor * specularMaterial * specularIntensity;
 	}
 
-	vec4 fragTexColor = texture(textureSampler, vec2(.5, .5));
+	vec4 fragTexColor = texture(textureSampler, outVertexTexCoord);
 
 	outVertexColor = fragTexColor * vec4(ambient + diffuse, 1.0) + vec4(specular, 1.0); 
 	//outVertexColor = fragTexColor;

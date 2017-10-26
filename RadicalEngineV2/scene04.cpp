@@ -192,29 +192,36 @@ bool Scene04::Initialize()
 	int bpp;
 	const unsigned char* data = Image::LoadBMP("../Resources/Textures/crate.bmp", width, height, bpp);
 
-	//GLuint textureBuffer;
 	glActiveTexture(GL_TEXTURE0 + 0);
-	glGenTextures(1, &m_textureLoc);
-	glBindTexture(GL_TEXTURE_2D, m_textureLoc);
+	glGenTextures(1, &m_textureImage);
+	glBindTexture(GL_TEXTURE_2D, m_textureImage);
 
 	if (bpp == 24)
 	{
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB, width, height);
+		glTexStorage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height);
 
-		glTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
-
+		//glTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, width, height, GL_RGB8, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		
 		//glTextureStorage2D(m_textureLoc, 1, GL_RGB, width, height);
 
 		//glTextureSubImage2D(m_textureLoc, 1, 0, 0, width, height, GL_RGB8, GL_UNSIGNED_BYTE, data);
 	}
 	else if (bpp == 32)
 	{
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, width, height);
+		glTexStorage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height);
 
-		glTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, width, height, GL_RGBA8, GL_UNSIGNED_INT, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	}
 
-	//glBindTexture(GL_TEXTURE_2D, data);
+	//glBindSampler(m_textureImage, m_cube.samplerUniform);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	//float color[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+	//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
 
 	delete[] data;
 
@@ -225,7 +232,7 @@ void Scene04::Update()
 {
 	UpdateCube();
 	glActiveTexture(GL_TEXTURE0 + 0);
-	glBindTexture(GL_TEXTURE_2D, m_textureLoc);
+	glBindTexture(GL_TEXTURE_2D, m_textureImage);
 	glUniform1i(m_cube.samplerUniform, 0);
 }
 

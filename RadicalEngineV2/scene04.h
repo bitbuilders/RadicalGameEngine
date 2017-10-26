@@ -34,6 +34,7 @@ private:
 
 		// sampler
 		GLint samplerUniform;
+		GLint samplerUniform2;
 	};
 
 	struct light
@@ -51,5 +52,6 @@ private:
 	GLuint m_vaoHandle;
 
 	GLuint m_textureImage;
+	GLuint m_textureImage2;
 };
 

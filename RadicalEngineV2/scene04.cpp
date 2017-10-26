@@ -181,6 +181,7 @@ bool Scene04::Initialize()
 	m_cube.specularMaterialUniform = glGetUniformLocation(m_cube.shaderProgram, "specularMaterial");
 
 	m_cube.samplerUniform = glGetUniformLocation(m_cube.shaderProgram, "textureSampler");
+	m_cube.samplerUniform2 = glGetUniformLocation(m_cube.shaderProgram, "textureSampler2");
 
 	m_light.positionUniform = glGetUniformLocation(m_cube.shaderProgram, "lightPosition");
 	m_light.colorUniform = glGetUniformLocation(m_cube.shaderProgram, "lightColor");
@@ -196,34 +197,62 @@ bool Scene04::Initialize()
 	glGenTextures(1, &m_textureImage);
 	glBindTexture(GL_TEXTURE_2D, m_textureImage);
 
-	if (bpp == 24)
-	{
-		glTexStorage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height);
+	int texStorageFormat = bpp == 32 ? GL_RGBA8 : GL_RGB8;
+	int texImageFormat = bpp == 32 ? GL_RGBA : GL_RGB;
 
-		//glTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, width, height, GL_RGB8, GL_UNSIGNED_BYTE, data);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		
-		//glTextureStorage2D(m_textureLoc, 1, GL_RGB, width, height);
+	glTexStorage2D(GL_TEXTURE_2D, 0, texStorageFormat, width, height);
 
-		//glTextureSubImage2D(m_textureLoc, 1, 0, 0, width, height, GL_RGB8, GL_UNSIGNED_BYTE, data);
-	}
-	else if (bpp == 32)
-	{
-		glTexStorage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height);
+	glTexImage2D(GL_TEXTURE_2D, 0, texImageFormat, width, height, 0, texImageFormat, GL_UNSIGNED_BYTE, data);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	}
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+
+	int width2;
+	int height2;
+	int bpp2;
+	const unsigned char* data2 = Image::LoadBMP("../Resources/Textures/swirl_effect.bmp", width2, height2, bpp2);
+
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glGenTextures(1, &m_textureImage2);
+	glBindTexture(GL_TEXTURE_2D, m_textureImage2);
+
+	int texStorageFormat2 = bpp2 == 32 ? GL_RGBA8 : GL_RGB8;
+	int texImageFormat2 = bpp2 == 32 ? GL_RGBA : GL_RGB;
+
+	glTexStorage2D(GL_TEXTURE_2D, 0, texStorageFormat2, width2, height2);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, texImageFormat2, width2, height2, 0, texImageFormat2, GL_UNSIGNED_BYTE, data2);
+	//if (bpp == 24)
+	//{
+	//	glTexStorage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height);
+
+	//	//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	//	
+	//	//glTextureStorage2D(m_textureLoc, 1, GL_RGB, width, height);
+
+	//	//glTextureSubImage2D(m_textureLoc, 1, 0, 0, width, height, GL_RGB8, GL_UNSIGNED_BYTE, data);
+	//}
+	//else if (bpp == 32)
+	//{
+	//	glTexStorage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height);
+
+	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	//}
 
 	//glBindSampler(m_textureImage, m_cube.samplerUniform);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 	//float color[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 	//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
 
-	delete[] data;
+	delete data;
+	//delete data2;
 
 	return true;
 }
@@ -234,6 +263,10 @@ void Scene04::Update()
 	glActiveTexture(GL_TEXTURE0 + 0);
 	glBindTexture(GL_TEXTURE_2D, m_textureImage);
 	glUniform1i(m_cube.samplerUniform, 0);
+
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_2D, m_textureImage2);
+	glUniform1i(m_cube.samplerUniform2, 1);
 }
 
 void Scene04::Render()
@@ -250,7 +283,7 @@ void Scene04::Shutdown()
 void Scene04::UpdateCube()
 {
 	// Ambient Color
-	glm::vec3 ambientMaterial = glm::vec3(0.0f, 0.1f, 0.2f);
+	glm::vec3 ambientMaterial = glm::vec3(0.2f, 0.2f, 0.2f);
 	glUniform3fv(m_cube.ambientMaterialUniform, 1, &ambientMaterial[0]);
 
 	// Model Matrix

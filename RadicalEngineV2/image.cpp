@@ -19,6 +19,11 @@ const unsigned char * Image::LoadBMP(const std::string & filename, int & width, 
 		//FILE* file = fopen(filename.c_str(), "rb");
 		unsigned char header[54];
 		fread_s(header, sizeof(header), sizeof(unsigned char), 54, file);
+		if (header[0] != 'B' && header[1] != 'M')
+		{
+			printf("INVALID BMP!\n");
+			return nullptr;
+		}
 		//fread(header, sizeof(unsigned char), 54, file);
 
 		width = *(int*)&(header[18]);

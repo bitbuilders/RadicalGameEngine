@@ -5,9 +5,15 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "timer.h"
 #include "image.h"
+#include "input.h"
 #include <iostream>
+//#define STB_IMAGE_IMPLEMENTATION
+//#include "stb_image.h"
 
-#define TEXTURED
+#define SPECULAR
+
+float Input::s_scrollX = 0.0f;
+float Input::s_scrollY = 0.0f;
 
 namespace
 {
@@ -122,15 +128,39 @@ Scene04::~Scene04()
 
 bool Scene04::Initialize()
 {
+	//int width2;
+	//int height2;
+	//int bpp2;
+	//stbi_uc* data2 = stbi_load("../Resources/Textures/led_strips_MonaLisa.bmp", &width2, &height2, &bpp2, 3);
+	//const unsigned char* data2 = Image::LoadBMP("../Resources/Textures/led_strips_MonaLisa.bmp", width2, height2, bpp2);
+
 #ifdef TEXTURED
-	m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\texturedphong.vs", "..\\Resources\\Shaders\\texturedphong.fs");
+	m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong.vs", GL_VERTEX_SHADER);
+	m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong.fs", GL_FRAGMENT_SHADER);
+	//m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\texturedphong.vs", "..\\Resources\\Shaders\\texturedphong.fs");
+#elif defined(MULTI)
+	m_shader.CompileShader("..\\Resources\\Shaders\\multi_texturedphong.vs", GL_VERTEX_SHADER);
+	m_shader.CompileShader("..\\Resources\\Shaders\\multi_texturedphong.fs", GL_FRAGMENT_SHADER);
+	std::cout << m_material.LoadTexture2D("../Resources/Textures/led_strips_MonaLisa.bmp", GL_TEXTURE0 + 1) << std::endl;
+	//m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\multi_texturedphong.vs", "..\\Resources\\Shaders\\multi_texturedphong.fs");
+#elif defined(SPECULAR)
+	m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_specular.vs", GL_VERTEX_SHADER);
+	m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_specular.fs", GL_FRAGMENT_SHADER);
+	std::cout << m_material.LoadTexture2D("../Resources/Textures/crate_specular.bmp", GL_TEXTURE0 + 1) << std::endl;
+	//m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\texturedphong_specular.vs", "..\\Resources\\Shaders\\texturedphong_specular.fs");
+	//data2 = stbi_load("../Resources/Textures/crate_specular.bmp", &width2, &height2, &bpp2, 3);
+	//data2 = Image::LoadBMP("../Resources/Textures/crate_specular.bmp", width2, height2, bpp2);
+#elif defined(PHONG)
+	m_shader.CompileShader("..\\Resources\\Shaders\\phong.vs", GL_VERTEX_SHADER);
+	m_shader.CompileShader("..\\Resources\\Shaders\\phong.fs", GL_FRAGMENT_SHADER);
+	//m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\phong.vs", "..\\Resources\\Shaders\\phong.fs");
+#else
+	m_shader.CompileShader("..\\Resources\\Shaders\\vertexlight.vs", GL_VERTEX_SHADER);
+	m_shader.CompileShader("..\\Resources\\Shaders\\basic.fs", GL_FRAGMENT_SHADER);
+	//m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\vertexlight.vs", "..\\Resources\\Shaders\\basic.fs");
 #endif
-#ifdef PHONG
-	m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\phong.vs", "..\\Resources\\Shaders\\phong.fs");
-#endif
-#ifdef BASIC
-	m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\vertexlight.vs", "..\\Resources\\Shaders\\basic.fs");
-#endif
+	m_shader.Link();
+	m_shader.Use();
 
 	//GLuint vboHandles[3];
 	//glGenBuffers(3, vboHandles);
@@ -172,60 +202,72 @@ bool Scene04::Initialize()
 	glVertexAttribFormat(2, 2, GL_FLOAT, GL_FALSE, 0);
 	glVertexAttribBinding(2, 2);
 
-	m_cube.mxModelViewUniform = glGetUniformLocation(m_cube.shaderProgram, "mxModelView");
-	m_cube.mxMVPUniform = glGetUniformLocation(m_cube.shaderProgram, "mxMVP");
-	m_cube.mxNormalUniform = glGetUniformLocation(m_cube.shaderProgram, "mxNormal");
+	//m_cube.mxModelViewUniform = glGetUniformLocation(m_shader.GetHandle(), "mxModelView");
+	//m_cube.mxMVPUniform = glGetUniformLocation(m_shader.GetHandle(), "mxMVP");
+	//m_cube.mxNormalUniform = glGetUniformLocation(m_shader.GetHandle(), "mxNormal");
 
-	m_cube.ambientMaterialUniform = glGetUniformLocation(m_cube.shaderProgram, "ambientMaterial");
-	m_cube.diffuseMaterialUniform = glGetUniformLocation(m_cube.shaderProgram, "diffuseMaterial");
-	m_cube.specularMaterialUniform = glGetUniformLocation(m_cube.shaderProgram, "specularMaterial");
+	//m_cube.ambientMaterialUniform = glGetUniformLocation(m_shader.GetHandle(), "ambientMaterial");
+	//m_cube.diffuseMaterialUniform = glGetUniformLocation(m_shader.GetHandle(), "diffuseMaterial");
+	//m_cube.specularMaterialUniform = glGetUniformLocation(m_shader.GetHandle(), "specularMaterial");
 
-	m_cube.samplerUniform = glGetUniformLocation(m_cube.shaderProgram, "textureSampler");
-	m_cube.samplerUniform2 = glGetUniformLocation(m_cube.shaderProgram, "textureSampler2");
+	//m_cube.samplerUniform = glGetUniformLocation(m_shader.GetHandle(), "textureSampler");
+	//m_cube.samplerUniform2 = glGetUniformLocation(m_shader.GetHandle(), "textureSampler2");
 
-	m_light.positionUniform = glGetUniformLocation(m_cube.shaderProgram, "lightPosition");
-	m_light.colorUniform = glGetUniformLocation(m_cube.shaderProgram, "lightColor");
+	//m_light.positionUniform = glGetUniformLocation(m_shader.GetHandle(), "lightPosition");
+	//m_light.colorUniform = glGetUniformLocation(m_shader.GetHandle(), "lightColor");
+
+	m_material.SetMaterial(glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.0f, 0.3f, 0.6f), glm::vec3(1.0f, 1.0f, 1.0f), 16.0f);
+	std::cout << m_material.LoadTexture2D("../Resources/Textures/crate.bmp", GL_TEXTURE0 + 0) << std::endl;
+
+	//m_cube.mxModelViewUniform = glGetUniformLocation(m_cube.shaderProgram, "mxModelView");
+	//m_cube.mxMVPUniform = glGetUniformLocation(m_cube.shaderProgram, "mxMVP");
+	//m_cube.mxNormalUniform = glGetUniformLocation(m_cube.shaderProgram, "mxNormal");
+
+	//m_cube.ambientMaterialUniform = glGetUniformLocation(m_cube.shaderProgram, "ambientMaterial");
+	//m_cube.diffuseMaterialUniform = glGetUniformLocation(m_cube.shaderProgram, "diffuseMaterial");
+	//m_cube.specularMaterialUniform = glGetUniformLocation(m_cube.shaderProgram, "specularMaterial");
+
+	//m_cube.samplerUniform = glGetUniformLocation(m_cube.shaderProgram, "textureSampler");
+	//m_cube.samplerUniform2 = glGetUniformLocation(m_cube.shaderProgram, "textureSampler2");
+
+	//m_light.positionUniform = glGetUniformLocation(m_cube.shaderProgram, "lightPosition");
+	//m_light.colorUniform = glGetUniformLocation(m_cube.shaderProgram, "lightColor");
 
 	//std::cout << m_cube.mxMVPUniform << std::endl;
 
-	int width;
-	int height;
-	int bpp;
-	const unsigned char* data = Image::LoadBMP("../Resources/Textures/crate.bmp", width, height, bpp);
+	//int width;
+	//int height;
+	//int bpp;
+	////const unsigned char* data = Image::LoadBMP("../Resources/Textures/crate.bmp", width, height, bpp);
+	//stbi_uc* data = stbi_load("../Resources/Textures/crate.bmp", &width, &height, &bpp, 3);
 
-	glActiveTexture(GL_TEXTURE0 + 0);
-	glGenTextures(1, &m_textureImage);
-	glBindTexture(GL_TEXTURE_2D, m_textureImage);
+	//glActiveTexture(GL_TEXTURE0 + 0);
+	//glGenTextures(1, &m_textureImage);
+	//glBindTexture(GL_TEXTURE_2D, m_textureImage);
 
-	int texStorageFormat = bpp == 32 ? GL_RGBA8 : GL_RGB8;
-	int texImageFormat = bpp == 32 ? GL_RGBA : GL_RGB;
+	//int texStorageFormat = bpp == 4 ? GL_RGBA8 : GL_RGB8;
+	//int texImageFormat = bpp == 4 ? GL_RGBA : GL_RGB;
 
-	glTexStorage2D(GL_TEXTURE_2D, 0, texStorageFormat, width, height);
+	//glTexStorage2D(GL_TEXTURE_2D, 0, texStorageFormat, width, height);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, texImageFormat, width, height, 0, texImageFormat, GL_UNSIGNED_BYTE, data);
+	//glTexImage2D(GL_TEXTURE_2D, 0, texImageFormat, width, height, 0, texImageFormat, GL_UNSIGNED_BYTE, data);
 
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	////glGenerateMipmap(GL_TEXTURE_2D);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	//glActiveTexture(GL_TEXTURE0 + 1);
+	//glGenTextures(1, &m_textureImage2);
+	//glBindTexture(GL_TEXTURE_2D, m_textureImage2);
 
-	int width2;
-	int height2;
-	int bpp2;
-	const unsigned char* data2 = Image::LoadBMP("../Resources/Textures/led_strips_MonaLisa.bmp", width2, height2, bpp2);
+	//int texStorageFormat2 = bpp2 == 4 ? GL_RGBA8 : GL_RGB8;
+	//int texImageFormat2 = bpp2 == 4 ? GL_RGBA : GL_RGB;
 
-	glActiveTexture(GL_TEXTURE0 + 1);
-	glGenTextures(1, &m_textureImage2);
-	glBindTexture(GL_TEXTURE_2D, m_textureImage2);
+	//glTexStorage2D(GL_TEXTURE_2D, 0, texStorageFormat2, width2, height2);
 
-	int texStorageFormat2 = bpp2 == 32 ? GL_RGBA8 : GL_RGB8;
-	int texImageFormat2 = bpp2 == 32 ? GL_RGBA : GL_RGB;
-
-	glTexStorage2D(GL_TEXTURE_2D, 0, texStorageFormat2, width2, height2);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, texImageFormat2, width2, height2, 0, texImageFormat2, GL_UNSIGNED_BYTE, data2);
+	//glTexImage2D(GL_TEXTURE_2D, 0, texImageFormat2, width2, height2, 0, texImageFormat2, GL_UNSIGNED_BYTE, data2);
 	//if (bpp == 24)
 	//{
 	//	glTexStorage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height);
@@ -246,16 +288,17 @@ bool Scene04::Initialize()
 
 	//glBindSampler(m_textureImage, m_cube.samplerUniform);
 
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	//glGenerateMipmap(GL_TEXTURE_2D);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 
 	//float color[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 	//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
 
-	delete data;
+	//delete data;
 	//delete data2;
 
 	return true;
@@ -264,13 +307,15 @@ bool Scene04::Initialize()
 void Scene04::Update()
 {
 	UpdateCube();
-	glActiveTexture(GL_TEXTURE0 + 0);
-	glBindTexture(GL_TEXTURE_2D, m_textureImage);
-	glUniform1i(m_cube.samplerUniform, 0);
+	//glActiveTexture(GL_TEXTURE0 + 0);
+	//glBindTexture(GL_TEXTURE_2D, m_textureImage);
+	m_shader.SetUniform("textureSampler", 0);
+	//glUniform1i(m_cube.samplerUniform, 0);
 
-	glActiveTexture(GL_TEXTURE0 + 1);
-	glBindTexture(GL_TEXTURE_2D, m_textureImage2);
-	glUniform1i(m_cube.samplerUniform2, 1);
+	//glActiveTexture(GL_TEXTURE0 + 1);
+	//glBindTexture(GL_TEXTURE_2D, m_textureImage2);
+	m_shader.SetUniform("textureSpecularSampler", 1);
+	//glUniform1i(m_cube.samplerUniform2, 1);
 }
 
 void Scene04::Render()
@@ -288,7 +333,8 @@ void Scene04::UpdateCube()
 {
 	// Ambient Color
 	glm::vec3 ambientMaterial = glm::vec3(0.2f, 0.2f, 0.2f);
-	glUniform3fv(m_cube.ambientMaterialUniform, 1, &ambientMaterial[0]);
+	//glUniform3fv(m_cube.ambientMaterialUniform, 1, &ambientMaterial[0]);
+	m_shader.SetUniform("material.ambient", m_material.m_ambient);
 
 	// Model Matrix
 	m_rotation += m_rotationSpeed * m_engine->Get<Timer>()->FrameTime();
@@ -302,29 +348,38 @@ void Scene04::UpdateCube()
 	glm::mat4 mxProjection = glm::perspective(90.0f, aspect, 0.1f, 1000.0f);
 
 	glm::mat4 mxModelView = mxView * mxModel;
-	glUniformMatrix4fv(m_cube.mxModelViewUniform, 1, GL_FALSE, &mxModelView[0][0]);
+	//glUniformMatrix4fv(m_cube.mxModelViewUniform, 1, GL_FALSE, &mxModelView[0][0]);
+	m_shader.SetUniform("mxModelView", mxModelView);
 
 	glm::mat4 mvp = mxProjection * mxView * mxModel;
-	glUniformMatrix4fv(m_cube.mxMVPUniform, 1, GL_FALSE, &mvp[0][0]);
+	//glUniformMatrix4fv(m_cube.mxMVPUniform, 1, GL_FALSE, &mvp[0][0]);
+	m_shader.SetUniform("mxMVP", mvp);
 
 	// Normals
 	glm::mat3 mxNormal = glm::mat3(mxModelView);
 	mxNormal = glm::inverse(mxNormal);
 	mxNormal = glm::transpose(mxNormal);
-	glUniformMatrix3fv(m_cube.mxNormalUniform, 1, GL_FALSE, &mxNormal[0][0]);
+	//glUniformMatrix3fv(m_cube.mxNormalUniform, 1, GL_FALSE, &mxNormal[0][0]);
+	m_shader.SetUniform("mxNormal", mxNormal);
 
 	// Light Position and Color
 	glm::vec3 lightPosition = mxView * glm::vec4(0.0f, 0.0f, 5.0f, 1.0f);
-	glUniformMatrix4fv(m_light.positionUniform, 1, GL_FALSE, &lightPosition[0]);
+	//glUniformMatrix4fv(m_light.positionUniform, 1, GL_FALSE, &lightPosition[0]);
+	m_shader.SetUniform("lightPosition", lightPosition);
 
 	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-	glUniform3fv(m_light.colorUniform, 1, &lightColor[0]);
+	//glUniform3fv(m_light.colorUniform, 1, &lightColor[0]);
+	m_shader.SetUniform("lightColor", lightColor);
 
 	// Diffuse Light
 	glm::vec3 diffuseMaterial = glm::vec3(0.0f, 0.5f, 0.75f);
-	glUniform3fv(m_cube.diffuseMaterialUniform, 1, &diffuseMaterial[0]);
+	//glUniform3fv(m_cube.diffuseMaterialUniform, 1, &diffuseMaterial[0]);
+	m_shader.SetUniform("material.diffuse", m_material.m_diffuse);
 
 	// Specular Light
 	glm::vec3 specularMaterial = glm::vec3(1.0f, 1.0f, 1.0f);
-	glUniform3fv(m_cube.specularMaterialUniform, 1, &specularMaterial[0]);
+	//glUniform3fv(m_cube.specularMaterialUniform, 1, &specularMaterial[0]);
+	m_shader.SetUniform("material.specular", m_material.m_specular);
+
+	m_shader.SetUniform("material.shininess", m_material.m_shine);
 }

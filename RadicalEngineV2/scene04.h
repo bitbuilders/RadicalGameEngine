@@ -1,6 +1,8 @@
 #pragma once
 #include "scene.h"
 #include "engine.h"
+#include "material.h"
+#include "shader.h"
 
 class Scene04 : public Scene
 {
@@ -53,5 +55,8 @@ private:
 
 	GLuint m_textureImage;
 	GLuint m_textureImage2;
+
+	Shader m_shader;
+	Material m_material;
 };
 

@@ -1,5 +1,8 @@
 #pragma once
+#include <vector>
 #include "engine.h"
+
+class Object;
 
 class Scene
 {
@@ -13,5 +16,6 @@ public:
 
 protected:
 	Engine* m_engine;
+	std::vector<Object*> m_objects;
 };
 

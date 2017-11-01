@@ -7,6 +7,7 @@ in vec2 outVertexTexCoord;
 layout (location=0) out vec4 outFragmentColor;
 
 layout (binding=0) uniform sampler2D textureSampler;
+layout (binding=1) uniform sampler2D textureSampler2;
 
 uniform vec3 ambientMaterial;
 uniform vec3 diffuseMaterial;
@@ -41,8 +42,9 @@ void main()
 	}
 
 	vec4 texel0 = texture(textureSampler, outVertexTexCoord);
+    vec4 texel1 = texture(textureSampler2, outVertexTexCoord);
 
-	vec4 fragTexColor = texel0;
+	vec4 fragTexColor = mix(texel0, texel1, 0.5);
 
 	outVertexColor = fragTexColor * vec4(ambient + diffuse, 1.0) + vec4(specular, 1.0); 
 	//outVertexColor = fragTexColor;

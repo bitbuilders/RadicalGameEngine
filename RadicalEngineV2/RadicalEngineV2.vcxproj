@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -89,7 +89,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\Middleware\glfw-3.2.1.bin.WIN32\include;$(SolutionDir)..\Middleware\glad\include;$(SolutionDir)..\Middleware\glm-master;$(SolutionDir)..\Middleware\stb</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Middleware\glfw-3.2.1.bin.WIN32\include;$(SolutionDir)..\Middleware\glad\include;$(SolutionDir)..\Middleware\glm-master;$(SolutionDir)..\Middleware\stb_image</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -105,7 +105,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\Middleware\glfw-3.2.1.bin.WIN32\include;$(SolutionDir)..\Middleware\glad\include;$(SolutionDir)..\Middleware\glm-master;$(SolutionDir)..\Middleware\stb</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Middleware\glfw-3.2.1.bin.WIN32\include;$(SolutionDir)..\Middleware\glad\include;$(SolutionDir)..\Middleware\glm-master;$(SolutionDir)..\Middleware\stb_image</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -123,7 +123,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\Middleware\glfw-3.2.1.bin.WIN32\include;$(SolutionDir)..\Middleware\glad\include;$(SolutionDir)..\Middleware\glm-master;$(SolutionDir)..\Middleware\stb</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Middleware\glfw-3.2.1.bin.WIN32\include;$(SolutionDir)..\Middleware\glad\include;$(SolutionDir)..\Middleware\glm-master;$(SolutionDir)..\Middleware\stb_image</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,7 +143,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\Middleware\glfw-3.2.1.bin.WIN32\include;$(SolutionDir)..\Middleware\glad\include;$(SolutionDir)..\Middleware\glm-master;$(SolutionDir)..\Middleware\stb</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Middleware\glfw-3.2.1.bin.WIN32\include;$(SolutionDir)..\Middleware\glad\include;$(SolutionDir)..\Middleware\glm-master;$(SolutionDir)..\Middleware\stb_image</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -159,9 +159,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Middleware\glad\include\glad\glad.h" />
+    <ClInclude Include="..\..\Middleware\stb_image\stb_image.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="image.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="material.h" />
+    <ClInclude Include="object.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="scene01.h" />
@@ -173,6 +176,7 @@
     <ClInclude Include="system.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="timer.h" />
+    <ClInclude Include="transform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Middleware\glad\src\glad.c">
@@ -185,6 +189,8 @@
     <ClCompile Include="image.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="material.cpp" />
+    <ClCompile Include="object.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="scene01.cpp" />
@@ -199,14 +205,19 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="timer.cpp" />
+    <ClCompile Include="transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Resources\Shaders\basic.fs" />
     <None Include="..\Resources\Shaders\basic.vs" />
+    <None Include="..\Resources\Shaders\multi_texturedphong.fs" />
+    <None Include="..\Resources\Shaders\multi_texturedphong.vs" />
     <None Include="..\Resources\Shaders\phong.fs" />
     <None Include="..\Resources\Shaders\phong.vs" />
     <None Include="..\Resources\Shaders\texturedphong.fs" />
     <None Include="..\Resources\Shaders\texturedphong.vs" />
+    <None Include="..\Resources\Shaders\texturedphong_specular.fs" />
+    <None Include="..\Resources\Shaders\texturedphong_specular.vs" />
     <None Include="..\Resources\Shaders\transform.vs" />
     <None Include="..\Resources\Shaders\vertexlight.vs" />
   </ItemGroup>

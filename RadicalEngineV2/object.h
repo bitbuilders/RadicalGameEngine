@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
 #include "transform.h"
-#include "scene.h"
+
+class Scene;
 
 class Object
 {

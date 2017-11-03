@@ -22,23 +22,36 @@ struct Material
 };
 uniform Material material;
 
+struct Light
+{
+	vec3 position;
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+uniform Light light;
+
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
+uniform vec3 lightAmbient;
+uniform vec3 lightDiffuse;
+uniform vec3 lightSpecular;
 
 out vec4 outVertexColor;
 
 void main()
 {
-   	//vec3 ambient = ambientMaterial;
-   	vec3 ambient = material.ambient;
+   	//vec3 ambient = material.ambient;
+   	vec3 ambient = light.ambient * material.ambient;
 
 	vec3 tNormal = outFragNormal;
 	vec4 mvPosition = outFragPosition;
-	vec3 positionToLight = normalize(vec3(lightPosition - vec3(mvPosition)));
+	//vec3 positionToLight = normalize(vec3(lightPosition - vec3(mvPosition)));
+	vec3 positionToLight = normalize(vec3(light.position - vec3(mvPosition)));
 
 	float diffuseIntensity = max(dot(positionToLight, tNormal), 0.0);
-	//vec3 diffuse = lightColor * material.diffuse * diffuseIntensity;
-	vec3 diffuse = lightColor * diffuseIntensity;
+	//vec3 diffuse = lightColor * diffuseIntensity;
+	vec3 diffuse = light.diffuse * diffuseIntensity;
 
 	vec3 specular = vec3(0.0);
 	if (diffuseIntensity > 0.0)
@@ -48,8 +61,8 @@ void main()
 		float specularIntensity = max(dot(reflectLightVector, positionToView), 0.0);
 		//specularIntensity = pow(specularIntensity, 16.0);
 		specularIntensity = pow(specularIntensity, material.shininess);
-		//specular = lightColor * specularMaterial * specularIntensity;
-		specular = lightColor * material.specular * specularIntensity;
+		//specular = lightColor * material.specular * specularIntensity;
+		specular = light.specular * material.specular * specularIntensity;
 	}
 
 	vec4 textureColor = texture(textureSampler, outVertexTexCoord);

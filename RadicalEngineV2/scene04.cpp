@@ -6,9 +6,8 @@
 #include "timer.h"
 #include "image.h"
 #include "input.h"
+#include "light.h"
 #include <iostream>
-//#define STB_IMAGE_IMPLEMENTATION
-//#include "stb_image.h"
 
 #define SPECULAR
 
@@ -124,6 +123,7 @@ Scene04::Scene04(Engine* engine)
 
 Scene04::~Scene04()
 {
+	delete m_camera;
 }
 
 bool Scene04::Initialize()
@@ -141,12 +141,12 @@ bool Scene04::Initialize()
 #elif defined(MULTI)
 	m_shader.CompileShader("..\\Resources\\Shaders\\multi_texturedphong.vs", GL_VERTEX_SHADER);
 	m_shader.CompileShader("..\\Resources\\Shaders\\multi_texturedphong.fs", GL_FRAGMENT_SHADER);
-	std::cout << m_material.LoadTexture2D("../Resources/Textures/led_strips_MonaLisa.bmp", GL_TEXTURE0 + 1) << std::endl;
+	m_material.LoadTexture2D("../Resources/Textures/led_strips_MonaLisa.bmp", GL_TEXTURE0 + 1);
 	//m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\multi_texturedphong.vs", "..\\Resources\\Shaders\\multi_texturedphong.fs");
 #elif defined(SPECULAR)
 	m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_specular.vs", GL_VERTEX_SHADER);
 	m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_specular.fs", GL_FRAGMENT_SHADER);
-	std::cout << m_material.LoadTexture2D("../Resources/Textures/crate_specular.bmp", GL_TEXTURE0 + 1) << std::endl;
+	m_material.LoadTexture2D("../Resources/Textures/crate_specular.bmp", GL_TEXTURE0 + 1);
 	//m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\texturedphong_specular.vs", "..\\Resources\\Shaders\\texturedphong_specular.fs");
 	//data2 = stbi_load("../Resources/Textures/crate_specular.bmp", &width2, &height2, &bpp2, 3);
 	//data2 = Image::LoadBMP("../Resources/Textures/crate_specular.bmp", width2, height2, bpp2);
@@ -217,7 +217,7 @@ bool Scene04::Initialize()
 	//m_light.colorUniform = glGetUniformLocation(m_shader.GetHandle(), "lightColor");
 
 	m_material.SetMaterial(glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.0f, 0.3f, 0.6f), glm::vec3(1.0f, 1.0f, 1.0f), 16.0f);
-	std::cout << m_material.LoadTexture2D("../Resources/Textures/crate.bmp", GL_TEXTURE0 + 0) << std::endl;
+	m_material.LoadTexture2D("../Resources/Textures/crate.bmp", GL_TEXTURE0 + 0);
 
 	//m_cube.mxModelViewUniform = glGetUniformLocation(m_cube.shaderProgram, "mxModelView");
 	//m_cube.mxMVPUniform = glGetUniformLocation(m_cube.shaderProgram, "mxMVP");
@@ -301,11 +301,26 @@ bool Scene04::Initialize()
 	//delete data;
 	//delete data2;
 
+	m_camera = new Camera("camera", this);
+	m_camera->Initialize(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f));
+
+	Light* light = new Light("light", this);
+	light->SetValues(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f));
+	AddObject(light);
+
+	m_engine->Get<Input>()->AddButton("escape click", Input::eButtonType::KEYBOARD, GLFW_KEY_ESCAPE);
+
 	return true;
 }
 
 void Scene04::Update()
 {
+	auto objects = GetObjects<Object>();
+	for (auto object : objects)
+	{
+		object->Update();
+	}
+
 	UpdateCube();
 	//glActiveTexture(GL_TEXTURE0 + 0);
 	//glBindTexture(GL_TEXTURE_2D, m_textureImage);
@@ -316,6 +331,12 @@ void Scene04::Update()
 	//glBindTexture(GL_TEXTURE_2D, m_textureImage2);
 	m_shader.SetUniform("textureSpecularSampler", 1);
 	//glUniform1i(m_cube.samplerUniform2, 1);
+	m_camera->Update();
+
+	if (m_engine->Get<Input>()->GetButton("escape click") == Input::eButtonState::DOWN)
+	{
+		glfwSetWindowShouldClose(m_engine->Get<Renderer>()->m_window, GLFW_TRUE);
+	}
 }
 
 void Scene04::Render()
@@ -331,21 +352,25 @@ void Scene04::Shutdown()
 
 void Scene04::UpdateCube()
 {
+	Light* light = GetObject<Light>("light");
+
 	// Ambient Color
-	glm::vec3 ambientMaterial = glm::vec3(0.2f, 0.2f, 0.2f);
+	glm::vec3 ambientMaterial = glm::vec3(0.5f, 0.5f, 0.5f);
 	//glUniform3fv(m_cube.ambientMaterialUniform, 1, &ambientMaterial[0]);
 	m_shader.SetUniform("material.ambient", m_material.m_ambient);
 
 	// Model Matrix
-	m_rotation += m_rotationSpeed * m_engine->Get<Timer>()->FrameTime();
+	//m_rotation += m_rotationSpeed * m_engine->Get<Timer>()->FrameTime();
 	glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), m_rotation, glm::vec3(1.0f, 0.0f, 0.0f));
 	glm::mat4 mxModel = translate * rotate;
 
-	glm::mat4 mxView = glm::lookAt(glm::vec3(0.0f, 1.0f, 1.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	//glm::mat4 mxView = glm::lookAt(glm::vec3(0.0f, 1.0f, 1.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 mxView = m_camera->GetView();
 
 	float aspect = ((float)m_engine->Get<Renderer>()->m_width / (float)m_engine->Get<Renderer>()->m_height);
-	glm::mat4 mxProjection = glm::perspective(90.0f, aspect, 0.1f, 1000.0f);
+	//glm::mat4 mxProjection = glm::perspective(90.0f, aspect, 0.1f, 1000.0f);
+	glm::mat4 mxProjection = m_camera->GetProjection();
 
 	glm::mat4 mxModelView = mxView * mxModel;
 	//glUniformMatrix4fv(m_cube.mxModelViewUniform, 1, GL_FALSE, &mxModelView[0][0]);
@@ -363,13 +388,18 @@ void Scene04::UpdateCube()
 	m_shader.SetUniform("mxNormal", mxNormal);
 
 	// Light Position and Color
-	glm::vec3 lightPosition = mxView * glm::vec4(0.0f, 0.0f, 5.0f, 1.0f);
+	//glm::vec3 lightPosition = mxView * glm::vec4(0.0f, 0.0f, 5.0f, 1.0f);
+	glm::vec3 lightPosition = mxView * glm::vec4(light->m_transform.m_position, 1.0f);
 	//glUniformMatrix4fv(m_light.positionUniform, 1, GL_FALSE, &lightPosition[0]);
-	m_shader.SetUniform("lightPosition", lightPosition);
+	//m_shader.SetUniform("lightPosition", lightPosition);
+	m_shader.SetUniform("light.position", lightPosition);
 
-	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+	//glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 	//glUniform3fv(m_light.colorUniform, 1, &lightColor[0]);
-	m_shader.SetUniform("lightColor", lightColor);
+	//m_shader.SetUniform("lightColor", lightColor);
+	m_shader.SetUniform("light.ambient", light->m_ambient);
+	m_shader.SetUniform("light.diffuse", light->m_diffuse);
+	m_shader.SetUniform("light.specular", light->m_specular);
 
 	// Diffuse Light
 	glm::vec3 diffuseMaterial = glm::vec3(0.0f, 0.5f, 0.75f);

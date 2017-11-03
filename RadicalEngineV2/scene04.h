@@ -3,6 +3,7 @@
 #include "engine.h"
 #include "material.h"
 #include "shader.h"
+#include "camera.h"
 
 class Scene04 : public Scene
 {
@@ -18,26 +19,26 @@ public:
 	void UpdateCube();
 
 private:
-	struct object
-	{
-		// id / handles
-		GLuint shaderProgram;
-		GLuint vaoHandle;
+	//struct object
+	//{
+	//	// id / handles
+	//	GLuint shaderProgram;
+	//	GLuint vaoHandle;
 
-		// transforms
-		GLint mxModelViewUniform;
-		GLint mxMVPUniform;
-		GLint mxNormalUniform;
+	//	// transforms
+	//	GLint mxModelViewUniform;
+	//	GLint mxMVPUniform;
+	//	GLint mxNormalUniform;
 
-		// material
-		GLint ambientMaterialUniform;
-		GLint diffuseMaterialUniform;
-		GLint specularMaterialUniform;
+	//	// material
+	//	GLint ambientMaterialUniform;
+	//	GLint diffuseMaterialUniform;
+	//	GLint specularMaterialUniform;
 
-		// sampler
-		GLint samplerUniform;
-		GLint samplerUniform2;
-	};
+	//	// sampler
+	//	GLint samplerUniform;
+	//	GLint samplerUniform2;
+	//};
 
 	struct light
 	{
@@ -45,7 +46,7 @@ private:
 		GLint colorUniform;
 	};
 
-	object m_cube;
+	//object m_cube;
 	light m_light;
 
 	float m_rotation;
@@ -53,10 +54,9 @@ private:
 
 	GLuint m_vaoHandle;
 
-	GLuint m_textureImage;
-	GLuint m_textureImage2;
-
 	Shader m_shader;
 	Material m_material;
+
+	Camera* m_camera;
 };
 

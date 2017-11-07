@@ -166,6 +166,7 @@
     <ClInclude Include="input.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="material.h" />
+    <ClInclude Include="mesh.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="renderable.h" />
     <ClInclude Include="renderer.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="scene02.h" />
     <ClInclude Include="scene03.h" />
     <ClInclude Include="scene04.h" />
+    <ClInclude Include="scene05.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="system.h" />
@@ -195,6 +197,7 @@
     <ClCompile Include="light.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="material.cpp" />
+    <ClCompile Include="mesh.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="renderable.cpp" />
     <ClCompile Include="renderer.cpp" />
@@ -203,6 +206,7 @@
     <ClCompile Include="scene02.cpp" />
     <ClCompile Include="scene03.cpp" />
     <ClCompile Include="scene04.cpp" />
+    <ClCompile Include="scene05.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -99,6 +99,12 @@
     <ClInclude Include="renderable.h">
       <Filter>Objects</Filter>
     </ClInclude>
+    <ClInclude Include="scene05.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -160,6 +166,12 @@
     </ClCompile>
     <ClCompile Include="renderable.cpp">
       <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="scene05.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

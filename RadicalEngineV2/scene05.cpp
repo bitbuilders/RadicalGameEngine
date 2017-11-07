@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Scene04.h"
+#include "Scene05.h"
 #include "renderer.h"
 #include "glm/vec3.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -7,59 +7,17 @@
 #include "image.h"
 #include "input.h"
 #include "light.h"
+#include "mesh.h"
 #include <iostream>
 
 #define SPECULAR
 
-float Input::s_scrollX = 0.0f;
-float Input::s_scrollY = 0.0f;
+// These already set in Scene04
+//float Input::s_scrollX = 0.0f;
+//float Input::s_scrollY = 0.0f;
 
 namespace
 {
-	//float vertexData[] =
-	//{
-	//	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	//	0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	//	0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	//	0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	//	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	//	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-
-	//	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	//	0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	//	0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	//	0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	//	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	//	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-
-	//	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	//	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	//	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	//	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	//	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	//	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-	//	0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	//	0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	//	0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	//	0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	//	0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	//	0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-	//	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	//	0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	//	0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	//	0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	//	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	//	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-	//	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	//	0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	//	0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	//	0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	//	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	//	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-	//};
 
 	float vertexData[] =
 	{
@@ -116,17 +74,17 @@ namespace
 	};
 }
 
-Scene04::Scene04(Engine* engine)
+Scene05::Scene05(Engine* engine)
 	: Scene(engine)
 {
 }
 
-Scene04::~Scene04()
+Scene05::~Scene05()
 {
 	delete m_camera;
 }
 
-bool Scene04::Initialize()
+bool Scene05::Initialize()
 {
 	//int width2;
 	//int height2;
@@ -162,10 +120,15 @@ bool Scene04::Initialize()
 	m_shader.Link();
 	m_shader.Use();
 
-	//GLuint vboHandles[3];
-	//glGenBuffers(3, vboHandles);
-	GLuint vboHandle;
-	glGenBuffers(1, &vboHandle);
+	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec3> normals;
+	std::vector<glm::vec2> uvs;
+	Mesh::LoadMesh("..\\Resources\\Meshes\\dragon.obj", vertices, normals, uvs);
+
+	m_numOfVertices = vertices.size();
+
+	GLuint vboHandle[3];
+	glGenBuffers(3, vboHandle);
 
 	//glBindBuffer(GL_ARRAY_BUFFER, vboHandles[POSITION]);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(positionData), positionData, GL_STATIC_DRAW);
@@ -173,8 +136,17 @@ bool Scene04::Initialize()
 	//glBindBuffer(GL_ARRAY_BUFFER, vboHandles[COLOR]);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(colorData), colorData, GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, vboHandle[0]);
+	if (vertices.size() > 0)
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, vboHandle[1]);
+	if (normals.size() > 0)
+		glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), normals.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, vboHandle[2]);
+	if (uvs.size() > 0)
+		glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), uvs.data(), GL_STATIC_DRAW);
+	//glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
 
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(colorData), colorData, GL_STATIC_DRAW);
 
@@ -185,11 +157,21 @@ bool Scene04::Initialize()
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
 
+	//auto uvSize = sizeof(GLfloat) * 2;
+	//auto posNormSize = sizeof(glm::vec3) * 2;
+	//glBindVertexBuffer(0, vboHandle, 0, posNormSize + uvSize);
+	//glBindVertexBuffer(1, vboHandle, sizeof(glm::vec3), posNormSize + uvSize);
+	//glBindVertexBuffer(2, vboHandle, posNormSize, posNormSize + uvSize);
+
 	auto uvSize = sizeof(GLfloat) * 2;
+	auto stride = sizeof(glm::vec3);
+	auto uvStride = sizeof(glm::vec2);
 	auto posNormSize = sizeof(glm::vec3) * 2;
-	glBindVertexBuffer(0, vboHandle, 0, posNormSize + uvSize);
-	glBindVertexBuffer(1, vboHandle, sizeof(glm::vec3), posNormSize + uvSize);
-	glBindVertexBuffer(2, vboHandle, posNormSize, posNormSize + uvSize);
+	glBindVertexBuffer(0, vboHandle[0], 0, stride);
+	if (normals.size() > 0)
+		glBindVertexBuffer(1, vboHandle[1], 0, stride);
+	if (uvs.size() > 0)
+		glBindVertexBuffer(2, vboHandle[2], 0, uvStride);
 
 	//glBindVertexBuffer(0, vboHandles[POSITION], 0, sizeof(glm::vec3));
 	//glBindVertexBuffer(1, vboHandles[COLOR], 0, sizeof(glm::vec3));
@@ -197,109 +179,19 @@ bool Scene04::Initialize()
 
 	glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, 0);
 	glVertexAttribBinding(0, 0);
-	glVertexAttribFormat(1, 3, GL_FLOAT, GL_FALSE, 0);
-	glVertexAttribBinding(1, 1);
-	glVertexAttribFormat(2, 2, GL_FLOAT, GL_FALSE, 0);
-	glVertexAttribBinding(2, 2);
-
-	//m_cube.mxModelViewUniform = glGetUniformLocation(m_shader.GetHandle(), "mxModelView");
-	//m_cube.mxMVPUniform = glGetUniformLocation(m_shader.GetHandle(), "mxMVP");
-	//m_cube.mxNormalUniform = glGetUniformLocation(m_shader.GetHandle(), "mxNormal");
-
-	//m_cube.ambientMaterialUniform = glGetUniformLocation(m_shader.GetHandle(), "ambientMaterial");
-	//m_cube.diffuseMaterialUniform = glGetUniformLocation(m_shader.GetHandle(), "diffuseMaterial");
-	//m_cube.specularMaterialUniform = glGetUniformLocation(m_shader.GetHandle(), "specularMaterial");
-
-	//m_cube.samplerUniform = glGetUniformLocation(m_shader.GetHandle(), "textureSampler");
-	//m_cube.samplerUniform2 = glGetUniformLocation(m_shader.GetHandle(), "textureSampler2");
-
-	//m_light.positionUniform = glGetUniformLocation(m_shader.GetHandle(), "lightPosition");
-	//m_light.colorUniform = glGetUniformLocation(m_shader.GetHandle(), "lightColor");
+	if (normals.size() > 0)
+	{
+		glVertexAttribFormat(1, 3, GL_FLOAT, GL_FALSE, 0);
+		glVertexAttribBinding(1, 1);
+	}
+	if (uvs.size() > 0)
+	{
+		glVertexAttribFormat(2, 2, GL_FLOAT, GL_FALSE, 0);
+		glVertexAttribBinding(2, 2);
+	}
 
 	m_material.SetMaterial(glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.0f, 0.3f, 0.6f), glm::vec3(1.0f, 1.0f, 1.0f), 16.0f);
 	m_material.LoadTexture2D("../Resources/Textures/crate.bmp", GL_TEXTURE0 + 0);
-
-	//m_cube.mxModelViewUniform = glGetUniformLocation(m_cube.shaderProgram, "mxModelView");
-	//m_cube.mxMVPUniform = glGetUniformLocation(m_cube.shaderProgram, "mxMVP");
-	//m_cube.mxNormalUniform = glGetUniformLocation(m_cube.shaderProgram, "mxNormal");
-
-	//m_cube.ambientMaterialUniform = glGetUniformLocation(m_cube.shaderProgram, "ambientMaterial");
-	//m_cube.diffuseMaterialUniform = glGetUniformLocation(m_cube.shaderProgram, "diffuseMaterial");
-	//m_cube.specularMaterialUniform = glGetUniformLocation(m_cube.shaderProgram, "specularMaterial");
-
-	//m_cube.samplerUniform = glGetUniformLocation(m_cube.shaderProgram, "textureSampler");
-	//m_cube.samplerUniform2 = glGetUniformLocation(m_cube.shaderProgram, "textureSampler2");
-
-	//m_light.positionUniform = glGetUniformLocation(m_cube.shaderProgram, "lightPosition");
-	//m_light.colorUniform = glGetUniformLocation(m_cube.shaderProgram, "lightColor");
-
-	//std::cout << m_cube.mxMVPUniform << std::endl;
-
-	//int width;
-	//int height;
-	//int bpp;
-	////const unsigned char* data = Image::LoadBMP("../Resources/Textures/crate.bmp", width, height, bpp);
-	//stbi_uc* data = stbi_load("../Resources/Textures/crate.bmp", &width, &height, &bpp, 3);
-
-	//glActiveTexture(GL_TEXTURE0 + 0);
-	//glGenTextures(1, &m_textureImage);
-	//glBindTexture(GL_TEXTURE_2D, m_textureImage);
-
-	//int texStorageFormat = bpp == 4 ? GL_RGBA8 : GL_RGB8;
-	//int texImageFormat = bpp == 4 ? GL_RGBA : GL_RGB;
-
-	//glTexStorage2D(GL_TEXTURE_2D, 0, texStorageFormat, width, height);
-
-	//glTexImage2D(GL_TEXTURE_2D, 0, texImageFormat, width, height, 0, texImageFormat, GL_UNSIGNED_BYTE, data);
-
-	////glGenerateMipmap(GL_TEXTURE_2D);
-	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	//glActiveTexture(GL_TEXTURE0 + 1);
-	//glGenTextures(1, &m_textureImage2);
-	//glBindTexture(GL_TEXTURE_2D, m_textureImage2);
-
-	//int texStorageFormat2 = bpp2 == 4 ? GL_RGBA8 : GL_RGB8;
-	//int texImageFormat2 = bpp2 == 4 ? GL_RGBA : GL_RGB;
-
-	//glTexStorage2D(GL_TEXTURE_2D, 0, texStorageFormat2, width2, height2);
-
-	//glTexImage2D(GL_TEXTURE_2D, 0, texImageFormat2, width2, height2, 0, texImageFormat2, GL_UNSIGNED_BYTE, data2);
-	//if (bpp == 24)
-	//{
-	//	glTexStorage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height);
-
-	//	//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
-	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-	//	
-	//	//glTextureStorage2D(m_textureLoc, 1, GL_RGB, width, height);
-
-	//	//glTextureSubImage2D(m_textureLoc, 1, 0, 0, width, height, GL_RGB8, GL_UNSIGNED_BYTE, data);
-	//}
-	//else if (bpp == 32)
-	//{
-	//	glTexStorage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height);
-
-	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	//}
-
-	//glBindSampler(m_textureImage, m_cube.samplerUniform);
-
-	//glGenerateMipmap(GL_TEXTURE_2D);
-	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-
-	//float color[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-	//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
-
-	//delete data;
-	//delete data2;
 
 	m_camera = new Camera("camera", this);
 	m_camera->Initialize(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f));
@@ -313,7 +205,7 @@ bool Scene04::Initialize()
 	return true;
 }
 
-void Scene04::Update()
+void Scene05::Update()
 {
 	auto objects = GetObjects<Object>();
 	for (auto object : objects)
@@ -339,18 +231,20 @@ void Scene04::Update()
 	}
 }
 
-void Scene04::Render()
+void Scene05::Render()
 {
 	glBindVertexArray(m_vaoHandle);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glDrawArrays(GL_TRIANGLES, 0, m_numOfVertices);
+	//glBindVertexArray(m_vaoHandle);
+	//glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 }
 
-void Scene04::Shutdown()
+void Scene05::Shutdown()
 {
 }
 
-void Scene04::UpdateCube()
+void Scene05::UpdateCube()
 {
 	Light* light = GetObject<Light>("light");
 

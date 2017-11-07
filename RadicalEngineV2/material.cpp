@@ -58,7 +58,7 @@ bool Material::LoadTexture2D(const std::string& filename, GLuint activeTexture)
 
 		m_textures.push_back(info);
 
-		//delete data;
+		delete data;
 	}
 
 	return success;

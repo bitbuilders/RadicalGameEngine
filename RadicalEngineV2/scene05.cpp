@@ -7,7 +7,9 @@
 #include "image.h"
 #include "input.h"
 #include "light.h"
-#include "mesh.h"
+#include "myMeshLoader.h"
+//#define TINYOBJLOADER_IMPLEMENTATION
+//#include "tiny_obj_loader.h"
 #include <iostream>
 
 #define SPECULAR
@@ -123,9 +125,10 @@ bool Scene05::Initialize()
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;
 	std::vector<glm::vec2> uvs;
-	Mesh::LoadMesh("..\\Resources\\Meshes\\dragon.obj", vertices, normals, uvs);
+	MyMeshLoader::LoadMesh("..\\Resources\\Meshes\\bunny.obj", vertices, normals, uvs);
 
 	m_numOfVertices = vertices.size();
+	//m_numOfVertices = vertices.size();
 
 	GLuint vboHandle[3];
 	glGenBuffers(3, vboHandle);
@@ -135,7 +138,8 @@ bool Scene05::Initialize()
 
 	//glBindBuffer(GL_ARRAY_BUFFER, vboHandles[COLOR]);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(colorData), colorData, GL_STATIC_DRAW);
-
+	
+	//int sizeOfIndividualData = sizeof(tinyobj::real_t);
 	glBindBuffer(GL_ARRAY_BUFFER, vboHandle[0]);
 	if (vertices.size() > 0)
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_STATIC_DRAW);
@@ -163,7 +167,8 @@ bool Scene05::Initialize()
 	//glBindVertexBuffer(1, vboHandle, sizeof(glm::vec3), posNormSize + uvSize);
 	//glBindVertexBuffer(2, vboHandle, posNormSize, posNormSize + uvSize);
 
-	auto uvSize = sizeof(GLfloat) * 2;
+	//auto uvSize = sizeof(tinyobj::real_t) * 2;
+	//auto otherSize = sizeof(tinyobj::real_t) * 3;
 	auto stride = sizeof(glm::vec3);
 	auto uvStride = sizeof(glm::vec2);
 	auto posNormSize = sizeof(glm::vec3) * 2;
@@ -254,7 +259,7 @@ void Scene05::UpdateCube()
 	m_shader.SetUniform("material.ambient", m_material.m_ambient);
 
 	// Model Matrix
-	m_rotation += m_rotationSpeed * m_engine->Get<Timer>()->FrameTime();
+	//m_rotation += m_rotationSpeed * m_engine->Get<Timer>()->FrameTime();
 	//std::cout << m_engine->Get<Timer>()->FrameTime() << std::endl;
 	glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), m_rotation, glm::vec3(1.0f, 0.0f, 0.0f));

@@ -70,5 +70,6 @@ void main()
 
 	outVertexColor = (textureColor * vec4(ambient + diffuse, 1.0)) + 
 		(specularColor * vec4(specular, 1.0)); 
+	//outVertexColor = (textureColor * vec4(ambient + diffuse, 1.0)) + vec4(specular, 1.0); 
 	//outVertexColor = fragTexColor;
 }

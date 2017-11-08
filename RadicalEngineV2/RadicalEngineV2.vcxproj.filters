@@ -102,8 +102,17 @@
     <ClInclude Include="scene05.h">
       <Filter>Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="myMeshLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="mesh.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="scene06.h">
+      <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -170,8 +179,17 @@
     <ClCompile Include="scene05.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="myMeshLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="mesh.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="model.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="scene06.cpp">
+      <Filter>Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

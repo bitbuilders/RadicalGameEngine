@@ -30,6 +30,14 @@ struct Light
 };
 uniform Light light;
 
+struct Fog
+{
+	float distanceMin;
+	float distanceMax;
+	vec3 color;
+};
+uniform Fog fog;
+
 //uniform vec3 lightPosition;
 //uniform vec3 lightColor;
 
@@ -67,7 +75,14 @@ void main()
 
 	vec4 fragTexColor = texel0;
 
-	outVertexColor = vec4(ambient + diffuse, 1.0) + vec4(specular, 1.0); 
+	vec4 phongColor = vec4(ambient + diffuse, 1.0) + vec4(specular, 1.0);
+
+	float distance = abs(mvPosition.z);
+	float fogIntensity = (distance - fog.distanceMin) / (fog.distanceMax - fog.distanceMin);
+	fogIntensity = clamp(fogIntensity, 0.0, 1.0);
+	vec4 fogColor = mix(phongColor, vec4(fog.color, 1.0), fogIntensity);
+
+	outVertexColor =  fogColor;
 	//outVertexColor = fragTexColor * vec4(ambient + diffuse, 1.0) + vec4(specular, 1.0); 
 	//outVertexColor = fragTexColor;
 }

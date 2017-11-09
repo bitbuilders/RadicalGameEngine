@@ -123,7 +123,7 @@ bool Scene06::Initialize()
 //#endif
 	// light
 	Light* light = new Light("light", this);
-	light->m_transform.m_position = glm::vec3(0.0f, 1.0f, 5.0f);
+	light->m_transform.m_position = glm::vec3(2.0f, 3.0f, 5.0f);
 	light->m_diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
 	light->m_specular = glm::vec3(1.0f, 1.0f, 1.0f);
 	AddObject(light);
@@ -133,19 +133,19 @@ bool Scene06::Initialize()
 	model->m_transform.m_scale = glm::vec3(1.0f);
 	model->m_transform.m_position = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_specular.vs", GL_VERTEX_SHADER);
-	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_specular.fs", GL_FRAGMENT_SHADER);
+	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_fog.vs", GL_VERTEX_SHADER);
+	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_fog.fs", GL_FRAGMENT_SHADER);
 	model->m_shader.Link();
 	model->m_shader.Use();
 	model->m_shader.PrintActiveAttribs();
 	model->m_shader.PrintActiveUniforms();
 
 	model->m_material.m_ambient = glm::vec3(0.2f, 0.2f, 0.2f);
-	model->m_material.m_diffuse = glm::vec3(0.75f, 0.75f, 0.75f);
+	model->m_material.m_diffuse = glm::vec3(0.0f, 0.5f, 0.75f);
 	model->m_material.m_specular = glm::vec3(1.0f, 1.0f, 1.0f);
 	model->m_material.m_shine = 0.4f * 128.0f;
 	model->m_material.LoadTexture2D("..\\Resources\\Textures\\crate.bmp", GL_TEXTURE0);
-	model->m_material.LoadTexture2D("..\\Resources\\Textures\\crate_specular.bmp", GL_TEXTURE1);
+	//model->m_material.LoadTexture2D("..\\Resources\\Textures\\crate_specular.bmp", GL_TEXTURE1);
 
 	model->m_shader.SetUniform("material.ambient", model->m_material.m_ambient);
 	model->m_shader.SetUniform("material.diffuse", model->m_material.m_diffuse);
@@ -159,6 +159,10 @@ bool Scene06::Initialize()
 	model->m_mesh.BindVertexAttrib(0, Mesh::eVertexType::POSITION);
 	model->m_mesh.BindVertexAttrib(1, Mesh::eVertexType::NORMAL);
 	model->m_mesh.BindVertexAttrib(2, Mesh::eVertexType::TEXCOORD);
+
+	model->m_shader.SetUniform("fog.distanceMin", 3.0f);
+	model->m_shader.SetUniform("fog.distanceMax", 20.0f);
+	model->m_shader.SetUniform("fog.color", glm::vec3(0.5f));
 	
 	AddObject(model);
 
@@ -198,7 +202,7 @@ void Scene06::Update()
 
 	glm::vec4 position = camera->GetView() *  glm::vec4(light->m_transform.m_position, 1.0f);
 	model->m_shader.Use();
-	model->m_shader.SetUniform("light.position", glm::vec3(position));
+	model->m_shader.SetUniform("light.position", position);
 
 	auto objects = GetObjects<Object>();
 	for (auto object : objects)

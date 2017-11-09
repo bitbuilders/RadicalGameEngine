@@ -229,5 +229,11 @@
     <None Include="..\Resources\Shaders\texturedphong_specular.vs">
       <Filter>Resource Files\Resources\Shaders</Filter>
     </None>
+    <None Include="..\Resources\Shaders\texturedphong_fog.fs">
+      <Filter>Resource Files\Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Resources\Shaders\texturedphong_fog.vs">
+      <Filter>Resource Files\Resources\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

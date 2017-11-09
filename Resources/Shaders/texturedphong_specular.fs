@@ -68,8 +68,8 @@ void main()
 	vec4 textureColor = texture(textureSampler, outVertexTexCoord);
 	vec4 specularColor = texture(textureSpecularSampler, outVertexTexCoord);
 
-	outVertexColor = (textureColor * vec4(ambient + diffuse, 1.0)) + 
-		(specularColor * vec4(specular, 1.0)); 
-	//outVertexColor = (textureColor * vec4(ambient + diffuse, 1.0)) + vec4(specular, 1.0); 
+	//outVertexColor = (textureColor * vec4(ambient + diffuse, 1.0)) + 
+	//	(specularColor * vec4(specular, 1.0));
+	outVertexColor = vec4(ambient + diffuse, 1.0) + vec4(specular, 1.0); 
 	//outVertexColor = fragTexColor;
 }

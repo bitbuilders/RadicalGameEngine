@@ -9,6 +9,7 @@
 #include "scene04.h"
 #include "scene05.h"
 #include "scene06.h"
+#include "scene07.h"
 
 int main()
 {
@@ -19,7 +20,7 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	std::shared_ptr<Scene> scene(new Scene06(engine.get()));
+	std::shared_ptr<Scene> scene(new Scene07(engine.get()));
 	bool success = false;
 	success = scene->Initialize();
 	if (!success)

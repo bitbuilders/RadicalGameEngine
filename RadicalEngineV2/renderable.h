@@ -15,7 +15,6 @@ public:
 	virtual void Render() = 0;
 
 public:
-	Shader m_shader;
 	Material m_material;
 };
 

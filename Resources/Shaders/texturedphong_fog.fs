@@ -84,5 +84,5 @@ void main()
 
 	outVertexColor =  fogColor;
 	//outVertexColor = fragTexColor * vec4(ambient + diffuse, 1.0) + vec4(specular, 1.0); 
-	//outVertexColor = fragTexColor;
+	//outVertexColor = fragTexColor * fogColor;
 }

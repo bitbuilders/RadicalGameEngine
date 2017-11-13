@@ -172,6 +172,7 @@
     <ClInclude Include="object.h" />
     <ClInclude Include="renderable.h" />
     <ClInclude Include="renderer.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="scene01.h" />
     <ClInclude Include="scene02.h" />
@@ -179,6 +180,7 @@
     <ClInclude Include="scene04.h" />
     <ClInclude Include="scene05.h" />
     <ClInclude Include="scene06.h" />
+    <ClInclude Include="scene07.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="system.h" />
@@ -213,6 +215,7 @@
     <ClCompile Include="scene04.cpp" />
     <ClCompile Include="scene05.cpp" />
     <ClCompile Include="scene06.cpp" />
+    <ClCompile Include="scene07.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -226,16 +229,19 @@
   <ItemGroup>
     <None Include="..\Resources\Shaders\basic.fs" />
     <None Include="..\Resources\Shaders\basic.vs" />
+    <None Include="..\Resources\Shaders\basic_color.vs" />
     <None Include="..\Resources\Shaders\multi_texturedphong.fs" />
     <None Include="..\Resources\Shaders\multi_texturedphong.vs" />
     <None Include="..\Resources\Shaders\phong.fs" />
     <None Include="..\Resources\Shaders\phong.vs" />
     <None Include="..\Resources\Shaders\texturedphong.fs" />
     <None Include="..\Resources\Shaders\texturedphong.vs" />
+    <None Include="..\Resources\Shaders\texturedphong_directional.fs" />
     <None Include="..\Resources\Shaders\texturedphong_fog.fs" />
     <None Include="..\Resources\Shaders\texturedphong_fog.vs" />
     <None Include="..\Resources\Shaders\texturedphong_specular.fs" />
     <None Include="..\Resources\Shaders\texturedphong_specular.vs" />
+    <None Include="..\Resources\Shaders\texturedphong_spotlight.fs" />
     <None Include="..\Resources\Shaders\transform.vs" />
     <None Include="..\Resources\Shaders\vertexlight.vs" />
   </ItemGroup>

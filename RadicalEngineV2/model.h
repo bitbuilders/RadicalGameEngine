@@ -13,6 +13,7 @@ public:
 	void Render();
 
 public:
+	Shader m_shader;
 	Mesh m_mesh;
 };
 

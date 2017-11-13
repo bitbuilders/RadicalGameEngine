@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Scene06.h"
+#include "Scene07.h"
 #include "renderer.h"
 #include "glm/vec3.hpp"
 #include "glm/vector_relational.hpp"
@@ -14,7 +14,7 @@
 //#include "tiny_obj_loader.h"
 #include <iostream>
 
-#define SPECULAR
+#define SPOTLIGHT
 
 // These already set in Scene04
 //float Input::s_scrollX = 0.0f;
@@ -78,66 +78,48 @@ namespace
 	};
 }
 
-Scene06::Scene06(Engine* engine)
+Scene07::Scene07(Engine* engine)
 	: Scene(engine)
 {
 }
 
-Scene06::~Scene06()
+Scene07::~Scene07()
 {
 	delete m_camera;
 }
 
-bool Scene06::Initialize()
+bool Scene07::Initialize()
 {
 	m_engine->Get<Input>()->AddButton("escape click", Input::eButtonType::KEYBOARD, GLFW_KEY_ESCAPE);
+	m_engine->Get<Input>()->AddButton("mode", Input::eButtonType::KEYBOARD, GLFW_KEY_SPACE);
 
-	//int width2;
-	//int height2;
-	//int bpp2;
-	//stbi_uc* data2 = stbi_load("../Resources/Textures/led_strips_MonaLisa.bmp", &width2, &height2, &bpp2, 3);
-	//const unsigned char* data2 = Image::LoadBMP("../Resources/Textures/led_strips_MonaLisa.bmp", width2, height2, bpp2);
-
-//#ifdef TEXTURED
-//	m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong.vs", GL_VERTEX_SHADER);
-//	m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong.fs", GL_FRAGMENT_SHADER);
-//	//m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\texturedphong.vs", "..\\Resources\\Shaders\\texturedphong.fs");
-//#elif defined(MULTI)
-//	m_shader.CompileShader("..\\Resources\\Shaders\\multi_texturedphong.vs", GL_VERTEX_SHADER);
-//	m_shader.CompileShader("..\\Resources\\Shaders\\multi_texturedphong.fs", GL_FRAGMENT_SHADER);
-//	m_material.LoadTexture2D("../Resources/Textures/led_strips_MonaLisa.bmp", GL_TEXTURE0 + 1);
-//	//m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\multi_texturedphong.vs", "..\\Resources\\Shaders\\multi_texturedphong.fs");
-//#elif defined(SPECULAR)
-//	m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_specular.vs", GL_VERTEX_SHADER);
-//	m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_specular.fs", GL_FRAGMENT_SHADER);
-//	m_material.LoadTexture2D("../Resources/Textures/crate_specular.bmp", GL_TEXTURE0 + 1);
-//	//m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\texturedphong_specular.vs", "..\\Resources\\Shaders\\texturedphong_specular.fs");
-//	//data2 = stbi_load("../Resources/Textures/crate_specular.bmp", &width2, &height2, &bpp2, 3);
-//	//data2 = Image::LoadBMP("../Resources/Textures/crate_specular.bmp", width2, height2, bpp2);
-//#elif defined(PHONG)
-//	m_shader.CompileShader("..\\Resources\\Shaders\\phong.vs", GL_VERTEX_SHADER);
-//	m_shader.CompileShader("..\\Resources\\Shaders\\phong.fs", GL_FRAGMENT_SHADER);
-//	//m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\phong.vs", "..\\Resources\\Shaders\\phong.fs");
-//#else
-//	m_shader.CompileShader("..\\Resources\\Shaders\\vertexlight.vs", GL_VERTEX_SHADER);
-//	m_shader.CompileShader("..\\Resources\\Shaders\\basic.fs", GL_FRAGMENT_SHADER);
-//	//m_cube.shaderProgram = m_engine->Get<Renderer>()->CreateShaderProgram("..\\Resources\\Shaders\\vertexlight.vs", "..\\Resources\\Shaders\\basic.fs");
-//#endif
 	// light
 	Light* light = new Light("light", this);
-	light->m_transform.m_position = glm::vec3(2.0f, 3.0f, 5.0f);
+	light->m_transform.m_position = glm::vec3(-5.0f, 3.0f, 5.0f);
 	light->m_diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
 	light->m_specular = glm::vec3(1.0f, 1.0f, 1.0f);
 	light->m_ambient = glm::vec3(0.4f, 0.4f, 0.4f);
 	AddObject(light);
+
+	// camera
+	Camera* camera = new Camera("camera", this);
+	Camera::Data data;
+	data.type = Camera::eType::ORBIT;
+	camera->Initialize(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), data);
+	AddObject(camera);
 
 	// model
 	auto model = new Model("model", this);
 	model->m_transform.m_scale = glm::vec3(1.0f);
 	model->m_transform.m_position = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_fog.vs", GL_VERTEX_SHADER);
+#ifdef SPOTLIGHT
+	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_spotlight.fs", GL_FRAGMENT_SHADER);
+#else
 	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_fog.fs", GL_FRAGMENT_SHADER);
+#endif
+
+	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_fog.vs", GL_VERTEX_SHADER);
 	model->m_shader.Link();
 	model->m_shader.Use();
 	model->m_shader.PrintActiveAttribs();
@@ -146,7 +128,7 @@ bool Scene06::Initialize()
 	model->m_material.m_ambient = glm::vec3(0.0f, 0.3f, 0.4f);
 	model->m_material.m_diffuse = glm::vec3(0.0f, 0.5f, 0.75f);
 	model->m_material.m_specular = glm::vec3(1.0f, 1.0f, 1.0f);
-	model->m_material.m_shine = 0.4f * 128.0f;
+	model->m_material.m_shine = 12.0f;
 	model->m_material.LoadTexture2D("..\\Resources\\Textures\\crate.bmp", GL_TEXTURE0);
 	//model->m_material.LoadTexture2D("..\\Resources\\Textures\\crate_specular.bmp", GL_TEXTURE1);
 
@@ -158,7 +140,17 @@ bool Scene06::Initialize()
 	model->m_shader.SetUniform("light.ambient", light->m_ambient);
 	model->m_shader.SetUniform("light.diffuse", light->m_diffuse);
 	model->m_shader.SetUniform("light.specular", light->m_specular);
-	
+
+#ifdef SPOTLIGHT
+	float cutoffAngle = 60.0f;
+	float lightExponent = 30.0f;
+	model->m_shader.SetUniform("light.cutoff", glm::radians(cutoffAngle));
+	model->m_shader.SetUniform("light.exponent", lightExponent);
+	glm::mat3 viewDirectionMatrix = glm::mat3(camera->GetView());
+	glm::vec3 direction = viewDirectionMatrix * glm::vec4(glm::vec3(0.0f, -1.0f, 0.0f), 0.0f);
+	model->m_shader.SetUniform("light.direction", direction);
+#endif
+
 	model->m_mesh.Load("..\\Resources\\Meshes\\suzanne.obj");
 	model->m_mesh.BindVertexAttrib(0, Mesh::eVertexType::POSITION);
 	model->m_mesh.BindVertexAttrib(1, Mesh::eVertexType::NORMAL);
@@ -167,46 +159,97 @@ bool Scene06::Initialize()
 	model->m_shader.SetUniform("fog.distanceMin", 3.0f);
 	model->m_shader.SetUniform("fog.distanceMax", 20.0f);
 	model->m_shader.SetUniform("fog.color", glm::vec3(0.5f));
-	
+
 	AddObject(model);
 
-	// camera
-	Camera* camera = new Camera("camera", this);
-	Camera::Data data;
-	data.type = Camera::eType::ORBIT;
-	camera->Initialize(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), data);
-	AddObject(camera);
+	// Model 2 (plane)
+	model = new Model("plane", this);
+	model->m_transform.m_scale = glm::vec3(10.0f);
+	model->m_transform.m_position = glm::vec3(0.0f, -1.0f, 0.0f);
+
+#ifdef SPOTLIGHT
+	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_spotlight.fs", GL_FRAGMENT_SHADER);
+#else
+	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_fog.fs", GL_FRAGMENT_SHADER);
+#endif
+
+	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_fog.vs", GL_VERTEX_SHADER);
+	model->m_shader.Link();
+	model->m_shader.Use();
+	model->m_shader.PrintActiveAttribs();
+	model->m_shader.PrintActiveUniforms();
+
+	model->m_material.m_ambient = glm::vec3(0.0f, 0.3f, 0.4f);
+	model->m_material.m_diffuse = glm::vec3(0.0f, 0.5f, 0.75f);
+	model->m_material.m_specular = glm::vec3(1.0f, 1.0f, 1.0f);
+	model->m_material.m_shine = 12.0f;
+	model->m_material.LoadTexture2D("..\\Resources\\Textures\\crate.bmp", GL_TEXTURE0);
+	//model->m_material.LoadTexture2D("..\\Resources\\Textures\\crate_specular.bmp", GL_TEXTURE1);
+
+	model->m_shader.SetUniform("material.ambient", model->m_material.m_ambient);
+	model->m_shader.SetUniform("material.diffuse", model->m_material.m_diffuse);
+	model->m_shader.SetUniform("material.specular", model->m_material.m_specular);
+	model->m_shader.SetUniform("material.shininess", model->m_material.m_shine);
+
+	model->m_shader.SetUniform("light.ambient", light->m_ambient);
+	model->m_shader.SetUniform("light.diffuse", light->m_diffuse);
+	model->m_shader.SetUniform("light.specular", light->m_specular);
+
+#ifdef SPOTLIGHT
+	model->m_shader.SetUniform("light.cutoff", glm::radians(cutoffAngle));
+	model->m_shader.SetUniform("light.exponent", lightExponent);
+	model->m_shader.SetUniform("light.direction", direction);
+#endif // SPOTLIGHT
+
+	model->m_mesh.Load("..\\Resources\\Meshes\\plane.obj");
+	model->m_mesh.BindVertexAttrib(0, Mesh::eVertexType::POSITION);
+	model->m_mesh.BindVertexAttrib(1, Mesh::eVertexType::NORMAL);
+	model->m_mesh.BindVertexAttrib(2, Mesh::eVertexType::TEXCOORD);
+
+	model->m_shader.SetUniform("fog.distanceMin", 3.0f);
+	model->m_shader.SetUniform("fog.distanceMax", 20.0f);
+	model->m_shader.SetUniform("fog.color", glm::vec3(0.5f));
+
+	AddObject(model);
+
+	m_rotation = 0.0f;
 
 	return true;
 }
 
-void Scene06::Update()
+void Scene07::Update()
 {
-	//auto objects = GetObjects<Object>();
-	//for (auto object : objects)
-	//{
-	//	object->Update();
-	//}
+	if (m_engine->Get<Input>()->GetButton("escape click") == Input::eButtonState::DOWN)
+	{
+		glfwSetWindowShouldClose(m_engine->Get<Renderer>()->m_window, GLFW_TRUE);
+	}
 
-	//UpdateCube();
-	////glActiveTexture(GL_TEXTURE0 + 0);
-	////glBindTexture(GL_TEXTURE_2D, m_textureImage);
-	//m_shader.SetUniform("textureSampler", 0);
-	////glUniform1i(m_cube.samplerUniform, 0);
-
-	////glActiveTexture(GL_TEXTURE0 + 1);
-	////glBindTexture(GL_TEXTURE_2D, m_textureImage2);
-	//m_shader.SetUniform("textureSpecularSampler", 1);
-	////glUniform1i(m_cube.samplerUniform2, 1);
-	//m_camera->Update();
+	if (m_engine->Get<Input>()->GetButton("mode") == Input::eButtonState::DOWN)
+	{
+		m_pointLightMode = !m_pointLightMode;
+	}
 
 	Model* model = GetObject<Model>("model");
 	Camera* camera = GetObject<Camera>("camera");
 	Light* light = GetObject<Light>("light");
 
-	glm::vec4 position = camera->GetView() *  glm::vec4(light->m_transform.m_position, 1.0f);
-	model->m_shader.Use();
-	model->m_shader.SetUniform("light.position", position);
+	float dt = m_engine->Get<Timer>()->FrameTime();
+	m_rotation = m_rotation + 5.0f * dt;
+	glm::quat rotation = glm::angleAxis(m_rotation, glm::vec3(1.0f, 1.0f, 0.0f));
+	//light->m_transform.m_position = rotation * glm::vec3(0.0f, 0.0f, 2.0f);
+	light->m_transform.m_position = rotation * glm::vec3(0.0f, 5.0f, 1.5f);
+	float w = (m_pointLightMode) ? 1.0f : 0.0f;
+	glm::vec4 position = camera->GetView() * glm::vec4(light->m_transform.m_position, w);
+	//model->m_shader.SetUniform("light.position", position);
+	//model->m_shader.Use();
+
+	auto models = GetObjects<Model>();
+	for (auto model : models)
+	{
+		model->m_shader.Use();
+		model->m_shader.SetUniform("light.position", position);
+	}
+
 
 	auto objects = GetObjects<Object>();
 	for (auto object : objects)
@@ -214,13 +257,10 @@ void Scene06::Update()
 		object->Update();
 	}
 
-	if (m_engine->Get<Input>()->GetButton("escape click") == Input::eButtonState::DOWN)
-	{
-		glfwSetWindowShouldClose(m_engine->Get<Renderer>()->m_window, GLFW_TRUE);
-	}
+
 }
 
-void Scene06::Render()
+void Scene07::Render()
 {
 	//glBindVertexArray(m_vaoHandle);
 	//glDrawArrays(GL_TRIANGLES, 0, m_numOfVertices);
@@ -234,11 +274,22 @@ void Scene06::Render()
 	}
 }
 
-void Scene06::Shutdown()
+void Scene07::Shutdown()
 {
 }
 
-void Scene06::UpdateCube()
+void Scene07::MoveLight()
+{
+
+
+}
+
+void Scene07::UpdateInput()
+{
+
+}
+
+void Scene07::UpdateCube()
 {
 	Light* light = GetObject<Light>("light");
 

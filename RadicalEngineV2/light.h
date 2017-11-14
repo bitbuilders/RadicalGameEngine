@@ -17,6 +17,7 @@ public:
 	glm::vec3 m_ambient;
 	glm::vec3 m_diffuse;
 	glm::vec3 m_specular;
+	glm::vec3 m_startingPosition;
 
 protected:
 	Shader m_shader;

@@ -44,5 +44,5 @@ void Timer::Update()
 		m_timeStamp = 0;
 	}
 
- 	m_timePrev = time;
+	m_timePrev = time;
 }

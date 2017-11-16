@@ -19,7 +19,7 @@
 #include <iostream>
 
 #define NUM_LIGHTS 5
-//#define DIRECT
+//#define SPOTLIGHT
 
 // These already set in Scene04
 //float Input::s_scrollX = 0.0f;
@@ -113,6 +113,7 @@ bool Scene08::Initialize()
 		light->m_diffuse = color;
 		light->m_specular = color;
 		light->m_ambient = glm::vec3(0.4f, 0.4f, 0.4f);
+		light->m_isActive = false;
 
 		light->m_startingPosition = position;
 
@@ -135,7 +136,7 @@ bool Scene08::Initialize()
 #ifdef SPOTLIGHT
 	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_spotlight.fs", GL_FRAGMENT_SHADER);
 #else
-	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_directional.fs", GL_FRAGMENT_SHADER);
+	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_directional_multi.fs", GL_FRAGMENT_SHADER);
 #endif
 
 	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_fog.vs", GL_VERTEX_SHADER);
@@ -155,6 +156,8 @@ bool Scene08::Initialize()
 	model->m_shader.SetUniform("material.diffuse", model->m_material.m_diffuse);
 	model->m_shader.SetUniform("material.specular", model->m_material.m_specular);
 	model->m_shader.SetUniform("material.shininess", model->m_material.m_shine);
+
+	model->m_shader.SetUniform("numOfLights", m_numOfLights);
 
 	for (size_t i = 0; i < lights.size(); i++)
 	{
@@ -200,7 +203,7 @@ bool Scene08::Initialize()
 #ifdef SPOTLIGHT
 	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_spotlight.fs", GL_FRAGMENT_SHADER);
 #else
-	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_directional.fs", GL_FRAGMENT_SHADER);
+	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_directional_multi.fs", GL_FRAGMENT_SHADER);
 #endif
 
 	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_fog.vs", GL_VERTEX_SHADER);
@@ -221,6 +224,8 @@ bool Scene08::Initialize()
 	model->m_shader.SetUniform("material.diffuse", model->m_material.m_diffuse);
 	model->m_shader.SetUniform("material.specular", model->m_material.m_specular);
 	model->m_shader.SetUniform("material.shininess", model->m_material.m_shine);
+
+	model->m_shader.SetUniform("numOfLights", m_numOfLights);
 
 	for (size_t i = 0; i < lights.size(); i++)
 	{
@@ -252,7 +257,7 @@ bool Scene08::Initialize()
 	model->m_shader.SetUniform("fog.distanceMax", 20.0f);
 	model->m_shader.SetUniform("fog.color", glm::vec3(0.5f));
 
-	AddObject(model);
+	//AddObject(model);
 
 	m_rotation = 0.0f;
 
@@ -268,11 +273,34 @@ void Scene08::Update()
 
 	if (m_engine->Get<Input>()->GetButton("mode") == Input::eButtonState::DOWN)
 	{
-		m_pointLightMode = !m_pointLightMode;
-		std::cout << m_pointLightMode << std::endl;
-	}
+		//m_pointLightMode = !m_pointLightMode;
+		auto lights = GetObjects<Light>();
+		if (m_numOfLights < NUM_LIGHTS)
+		{
+			++m_numOfLights;
+		}
+		else
+		{
+			auto models = GetObjects<Model>();
+			m_numOfLights = 0;
+			for (Light* l : lights)
+			{
+				l->m_isActive = false;
+			}
+			for (Model* m : models)
+			{
+				m->m_shader.SetUniform("numOfLights", m_numOfLights);
+			}
+		}
+		if (m_numOfLights >= 1)
+		{
+			lights.at(m_numOfLights - 1)->m_isActive = true;
+		}
 
-	Model* model = GetObject<Model>("model");
+	}
+		std::cout << m_engine->Get<Timer>()->FrameTime() << std::endl;
+
+	//Model* model = GetObject<Model>("model");
 	Camera* camera = GetObject<Camera>("camera");
 	//Light* light = GetObject<Light>("light");
 
@@ -284,7 +312,7 @@ void Scene08::Update()
 	glm::quat rotation = glm::angleAxis(m_rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	auto lights = GetObjects<Light>();
-	for (size_t i = 0; i < lights.size(); i++)
+	for (size_t i = 0; i < m_numOfLights; i++)
 	{
 		Light* light = lights.at(i);
 		//light->m_transform.m_position = rotation * glm::vec3(0.0f, 2.0f, 1.5f);
@@ -293,7 +321,7 @@ void Scene08::Update()
 		//light->m_transform.m_rotation *= glm::quat(rotation);
 		float w = (m_pointLightMode) ? 1.0f : 0.0f;
 		glm::vec4 position = camera->GetView() * glm::vec4(light->m_transform.m_position, w);
-		
+
 		auto models = GetObjects<Model>();
 		for (auto model : models)
 		{
@@ -301,6 +329,7 @@ void Scene08::Update()
 			char uniformName[32]; 
 			sprintf_s(uniformName, "lights[%d].position", i);
 			model->m_shader.SetUniform(uniformName, position);
+			model->m_shader.SetUniform("numOfLights", m_numOfLights);
 		}
 	}
 

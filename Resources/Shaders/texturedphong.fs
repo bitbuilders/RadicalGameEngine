@@ -67,7 +67,7 @@ void main()
 
 	vec4 fragTexColor = texel0;
 
-	outVertexColor = vec4(ambient + diffuse, 1.0) + vec4(specular, 1.0); 
+	//outVertexColor = vec4(ambient + diffuse, 1.0) + vec4(specular, 1.0); 
 	//outVertexColor = fragTexColor * vec4(ambient + diffuse, 1.0) + vec4(specular, 1.0); 
-	//outVertexColor = fragTexColor;
+	outVertexColor = fragTexColor;
 }

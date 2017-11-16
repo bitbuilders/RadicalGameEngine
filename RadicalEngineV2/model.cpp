@@ -3,6 +3,7 @@
 #include "camera.h"
 #include "scene.h"
 #include "timer.h"
+#include <string>
 
 Model::Model(std::string name, Scene* scene)
 	: Renderable(name, scene)
@@ -18,7 +19,10 @@ void Model::Update()
 {
 	m_shader.Use();
 
-	Camera* camera = m_scene->GetObject<Camera>("camera");
+	std::string cameraID = (m_cameraID.empty()) ? "camera" : m_cameraID;
+	Camera* camera = m_scene->GetObject<Camera>(cameraID);
+
+	//Camera* camera = m_scene->GetObject<Camera>("camera");
 
 	static float angle = 0;
 	static float speed = 10.0f;

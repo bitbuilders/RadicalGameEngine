@@ -32,6 +32,7 @@ private:
 	float m_rotationSpeed = 10.0f;
 
 	GLuint m_numOfVertices;
+	int m_numOfLights = 0;
 	bool m_pointLightMode = true;
 };
 

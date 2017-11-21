@@ -12,6 +12,7 @@
 #include "scene07.h"
 #include "scene08.h"
 #include "scene09.h"
+#include "scene10.h"
 
 int main()
 {
@@ -22,7 +23,7 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	std::shared_ptr<Scene> scene(new Scene09(engine.get()));
+	std::shared_ptr<Scene> scene(new Scene10(engine.get()));
 	bool success = false;
 	success = scene->Initialize();
 	if (!success)
@@ -35,12 +36,12 @@ int main()
 	while (!glfwWindowShouldClose(engine->Get<Renderer>()->m_window))
 	{
 		engine->Update();
+		scene->Update();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// render code
-		engine->Update();
-		scene->Update();
+		//engine->Update();
 		scene->Render();
 
 		glfwSwapBuffers(engine->Get<Renderer>()->m_window);

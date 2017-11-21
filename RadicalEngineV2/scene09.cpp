@@ -177,7 +177,7 @@ bool Scene09::Initialize()
 	AddObject(model);
 
 	model = new Model("cube", this);
-	model->m_transform.m_scale = glm::vec3(1.0f);
+	model->m_transform.m_scale = glm::vec3(2.0f);
 	model->m_transform.m_position = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong.vs", GL_VERTEX_SHADER);
@@ -262,7 +262,7 @@ void Scene09::Update()
 	//Camera* camera = GetObject<Camera>("camera");
 	Light* light = GetObject<Light>("light");
 
-	m_rotation = m_rotation + 10.0f * m_engine->Get<Timer>()->FrameTime();
+	m_rotation = m_rotation + 1.0f * m_engine->Get<Timer>()->FrameTime();
 	glm::quat rotation = glm::angleAxis(m_rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 	model->m_transform.m_rotation = rotation;
 

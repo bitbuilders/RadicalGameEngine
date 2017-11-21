@@ -18,7 +18,7 @@
 //#include "tiny_obj_loader.h"
 #include <iostream>
 
-#define NUM_LIGHTS 5
+#define NUM_LIGHTS 100
 //#define SPOTLIGHT
 
 // These already set in Scene04
@@ -104,7 +104,7 @@ bool Scene08::Initialize()
 	for (int i = 0; i < NUM_LIGHTS; ++i)
 	{
 		Light* light = new Light("light", this);
-		glm::vec3 position = glm::sphericalRand(4.0f);
+		glm::vec3 position = glm::sphericalRand(5.0f);
 		//light->m_transform.m_position = glm::vec3(-5.0f, 3.0f, 5.0f);
 		light->m_transform.m_position = position;
 		glm::vec3 color = glm::rgbColor(glm::vec3(glm::linearRand(0.0f, 360.0f), 1.0f, 0.85f));
@@ -184,7 +184,10 @@ bool Scene08::Initialize()
 	model->m_shader.SetUniform("light.direction", direction);
 #endif
 
-	model->m_mesh.Load("..\\Resources\\Meshes\\suzanne.obj");
+	model->m_mesh.Load("..\\Resources\\Meshes\\sceneStage.obj");
+	model->m_transform.m_scale = glm::vec3(0.005f);
+	model->m_transform.m_position = glm::vec3(0.0f, -1.0f, 0.0f);
+
 	model->m_mesh.BindVertexAttrib(0, Mesh::eVertexType::POSITION);
 	model->m_mesh.BindVertexAttrib(1, Mesh::eVertexType::NORMAL);
 	model->m_mesh.BindVertexAttrib(2, Mesh::eVertexType::TEXCOORD);
@@ -198,7 +201,7 @@ bool Scene08::Initialize()
 	// Model 2 (plane)
 	model = new Model("plane", this);
 	model->m_transform.m_scale = glm::vec3(10.0f);
-	model->m_transform.m_position = glm::vec3(0.0f, -1.0f, 0.0f);
+	model->m_transform.m_position = glm::vec3(0.0f, -3.0f, 0.0f);
 
 #ifdef SPOTLIGHT
 	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong_spotlight.fs", GL_FRAGMENT_SHADER);
@@ -298,7 +301,7 @@ void Scene08::Update()
 		}
 
 	}
-		std::cout << m_engine->Get<Timer>()->FrameTime() << std::endl;
+		//std::cout << m_engine->Get<Timer>()->FrameTime() << std::endl;
 
 	//Model* model = GetObject<Model>("model");
 	Camera* camera = GetObject<Camera>("camera");

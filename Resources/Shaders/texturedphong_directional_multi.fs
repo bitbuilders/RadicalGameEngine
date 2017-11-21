@@ -29,7 +29,7 @@ struct Light
 	vec3 specular;
 };
 //uniform Light light;
-uniform Light lights[5];
+uniform Light lights[100];
 
 uniform int numOfLights = 0;
 

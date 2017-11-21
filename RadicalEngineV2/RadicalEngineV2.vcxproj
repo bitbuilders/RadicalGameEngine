@@ -183,6 +183,7 @@
     <ClInclude Include="scene07.h" />
     <ClInclude Include="scene08.h" />
     <ClInclude Include="scene09.h" />
+    <ClInclude Include="scene10.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="system.h" />
@@ -220,6 +221,7 @@
     <ClCompile Include="scene07.cpp" />
     <ClCompile Include="scene08.cpp" />
     <ClCompile Include="scene09.cpp" />
+    <ClCompile Include="scene10.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -238,6 +240,8 @@
     <None Include="..\Resources\Shaders\multi_texturedphong.vs" />
     <None Include="..\Resources\Shaders\phong.fs" />
     <None Include="..\Resources\Shaders\phong.vs" />
+    <None Include="..\Resources\Shaders\reflection.fs" />
+    <None Include="..\Resources\Shaders\reflection.vs" />
     <None Include="..\Resources\Shaders\texturedphong.fs" />
     <None Include="..\Resources\Shaders\texturedphong.vs" />
     <None Include="..\Resources\Shaders\texturedphong_directional.fs" />

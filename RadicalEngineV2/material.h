@@ -15,6 +15,8 @@ public:
 
 	static GLuint CreateTexture(GLuint width, GLuint height);
 
+	bool LoadTextureCube(const std::string & basename, const std::vector<std::string>& suffixes, const std::string & type, GLuint activeTexture);
+
 public:
 	glm::vec3 m_ambient;
 	glm::vec3 m_diffuse;
@@ -23,6 +25,7 @@ public:
 
 	struct TextureInfo
 	{
+		GLenum type;
 		GLuint activeTexture;
 		GLuint texture;
 	};

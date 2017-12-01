@@ -13,8 +13,6 @@
 #include "light.h"
 #include "myMeshLoader.h"
 #include "model.h"
-//#define TINYOBJLOADER_IMPLEMENTATION
-//#include "tiny_obj_loader.h"
 #include <iostream>
 #include <random>
 
@@ -23,64 +21,6 @@
 // These already set in Scene04
 //float Input::s_scrollX = 0.0f;
 //float Input::s_scrollY = 0.0f;
-
-namespace
-{
-
-	float vertexData[] =
-	{
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
-
-	};
-
-
-	enum vboID
-	{
-		POSITION,
-		COLOR,
-		VERTEX
-	};
-}
 
 Scene10::Scene10(Engine* engine)
 	: Scene(engine)
@@ -95,18 +35,6 @@ Scene10::~Scene10()
 bool Scene10::Initialize()
 {
 	m_engine->Get<Input>()->AddButton("escape click", Input::eButtonType::KEYBOARD, GLFW_KEY_ESCAPE);
-
-	// light
-	//auto seed = std::chrono::system_clock::now().time_since_epoch().count();
-	//srand(seed);
-
-	//Light* light = new Light("light", this);
-	//light->m_transform.m_position = glm::vec3(3.0, 2.0, 1.0);
-	//glm::vec3 color = glm::rgbColor(glm::vec3(glm::linearRand(0.0f, 360.0f), 1.0f, 0.8f));
-	//light->m_diffuse = color;
-	//light->m_specular = glm::vec3(1.0f, 1.0f, 1.0f);
-	//light->m_ambient = glm::vec3(0.6f, 0.6f, 0.6f);
-	//AddObject(light);
 
 	// model
 	auto model = new Model("skybox", this);
@@ -130,18 +58,6 @@ bool Scene10::Initialize()
 
 	std::vector<std::string> suffixes = { "_posx", "_negx", "_posy", "_negy", "_posz", "_negz" };
 	model->m_material.LoadTextureCube("..\\Resources\\Textures\\cubemaps\\lancellotti", suffixes, "jpg", GL_TEXTURE0);
-
-	//model->m_material.LoadTexture2D("..\\Resources\\Textures\\crate.bmp", GL_TEXTURE0);
-	//model->m_material.LoadTexture2D("..\\Resources\\Textures\\crate_specular.bmp", GL_TEXTURE1);
-
-	//model->m_shader.SetUniform("material.ambient", model->m_material.m_ambient);
-	//model->m_shader.SetUniform("material.diffuse", model->m_material.m_diffuse);
-	//model->m_shader.SetUniform("material.specular", model->m_material.m_specular);
-	//model->m_shader.SetUniform("material.shininess", model->m_material.m_shine);
-
-	//model->m_shader.SetUniform("light.ambient", light->m_ambient);
-	//model->m_shader.SetUniform("light.diffuse", light->m_diffuse);
-	//model->m_shader.SetUniform("light.specular", light->m_specular);
 
 	model->m_mesh.Load("..\\Resources\\Meshes\\cube.obj");
 	model->m_mesh.BindVertexAttrib(0, Mesh::eVertexType::POSITION);

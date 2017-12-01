@@ -129,6 +129,9 @@
     <ClInclude Include="scene10.h">
       <Filter>Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="scene11.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -218,6 +221,9 @@
     <ClCompile Include="scene10.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="scene11.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Resources\Shaders\basic.fs">
@@ -278,6 +284,12 @@
       <Filter>Resource Files\Resources\Shaders</Filter>
     </None>
     <None Include="..\Resources\Shaders\reflection.vs">
+      <Filter>Resource Files\Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Resources\Shaders\texturedphong_normalmap.fs">
+      <Filter>Resource Files\Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Resources\Shaders\texturedphong_normalmap.vs">
       <Filter>Resource Files\Resources\Shaders</Filter>
     </None>
   </ItemGroup>

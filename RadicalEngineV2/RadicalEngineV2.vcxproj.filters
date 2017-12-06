@@ -310,5 +310,11 @@
     <None Include="..\Resources\Shaders\shadow_depth_debug.fs">
       <Filter>Resource Files\Resources\Shaders</Filter>
     </None>
+    <None Include="..\Resources\Shaders\shadow_phong.fs">
+      <Filter>Resource Files\Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Resources\Shaders\shadow_phong.vs">
+      <Filter>Resource Files\Resources\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

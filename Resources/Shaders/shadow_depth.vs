@@ -7,5 +7,5 @@ uniform mat4 mxModel;
 
 void main()
 {
-   gl_Position = mxLVP * mxModel * vec4(vertexPosition, 1.0);
+	gl_Position = mxLVP * mxModel * vec4(vertexPosition, 1.0);
 }

@@ -17,8 +17,8 @@
 #include <random>
 
 #define SPECULAR
-#define SHADOW_BUFFER_WIDTH	1024
-#define SHADOW_BUFFER_HEIGHT 1024
+#define SHADOW_BUFFER_WIDTH	1024 * 1
+#define SHADOW_BUFFER_HEIGHT 1024 * 1
 
 // These already set in Scene04
 //float Input::s_scrollX = 0.0f;
@@ -51,9 +51,10 @@ bool Scene12::Initialize()
 	
 	AddObject(camera);
 
+	GLuint depthTexture = Material::CreateDepthTexture(SHADOW_BUFFER_WIDTH, SHADOW_BUFFER_HEIGHT);
 
 	auto light = new Light("light", this);
-	light->m_transform.m_position = glm::vec3(2.0f, 2.0f, 3.0f);
+	light->m_transform.m_position = glm::vec3(0.0f, 3.0f, 2.0f);
 	light->m_diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
 	light->m_specular = glm::vec3(1.0f);
 
@@ -63,8 +64,8 @@ bool Scene12::Initialize()
 	model->m_transform.m_scale = glm::vec3(1.0f);
 	model->m_transform.m_position = glm::vec3(0.0f, 0.25f, 0.0f);
 
-	model->m_shader.CompileShader("..\\Resources\\Shaders\\phong.vs", GL_VERTEX_SHADER);
-	model->m_shader.CompileShader("..\\Resources\\Shaders\\phong.fs", GL_FRAGMENT_SHADER);
+	model->m_shader.CompileShader("..\\Resources\\Shaders\\shadow_phong.vs", GL_VERTEX_SHADER);
+	model->m_shader.CompileShader("..\\Resources\\Shaders\\shadow_phong.fs", GL_FRAGMENT_SHADER);
 	model->m_shader.Link();
 	model->m_shader.Use();
 	model->m_shader.PrintActiveAttribs();
@@ -75,7 +76,8 @@ bool Scene12::Initialize()
 	model->m_material.m_specular = glm::vec3(1.0f, 1.0f, 1.0f);
 	model->m_material.m_shine = 0.4f * 128.0f;
 
-	model->m_material.LoadTexture2D("..\\Resources\\Textures\\rocks.jpg", GL_TEXTURE0);
+	model->m_material.LoadTexture2D("..\\Resources\\Textures\\crate.bmp", GL_TEXTURE0);
+	model->m_material.AddTexture(depthTexture, GL_TEXTURE1);
 	//model->m_material.LoadTexture2D("..\\Resources\\Textures\\ogre_diffuse.bmp", GL_TEXTURE1);
 
 	model->m_shader.SetUniform("material.ambient", glm::vec3(0.0f, 0.1f, 0.1f));
@@ -86,7 +88,7 @@ bool Scene12::Initialize()
 	model->m_shader.SetUniform("light.diffuse", light->m_diffuse);
 	model->m_shader.SetUniform("light.specular", light->m_specular);
 
-	model->m_mesh.Load("..\\Resources\\Meshes\\suzanne.obj", true);
+	model->m_mesh.Load("..\\Resources\\Meshes\\cube.obj", false);
 	model->m_mesh.BindVertexAttrib(0, Mesh::eVertexType::POSITION);
 	model->m_mesh.BindVertexAttrib(1, Mesh::eVertexType::NORMAL);
 	model->m_mesh.BindVertexAttrib(2, Mesh::eVertexType::TEXCOORD);
@@ -101,8 +103,8 @@ bool Scene12::Initialize()
 	model->m_transform.m_scale = glm::vec3(8.0f);
 	model->m_transform.m_position = glm::vec3(0.0f, -1.0f, 0.0f);
 
-	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong.vs", GL_VERTEX_SHADER);
-	model->m_shader.CompileShader("..\\Resources\\Shaders\\texturedphong.fs", GL_FRAGMENT_SHADER);
+	model->m_shader.CompileShader("..\\Resources\\Shaders\\shadow_phong.vs", GL_VERTEX_SHADER);
+	model->m_shader.CompileShader("..\\Resources\\Shaders\\shadow_phong.fs", GL_FRAGMENT_SHADER);
 	model->m_shader.Link();
 	model->m_shader.Use();
 	model->m_shader.PrintActiveAttribs();
@@ -113,6 +115,7 @@ bool Scene12::Initialize()
 	model->m_material.m_specular = glm::vec3(1.0f, 1.0f, 1.0f);
 	model->m_material.m_shine = 0.4f * 128.0f;
 
+	model->m_material.AddTexture(depthTexture, GL_TEXTURE1);
 	model->m_material.LoadTexture2D("..\\Resources\\Textures\\brick.png", GL_TEXTURE0);
 
 	model->m_shader.SetUniform("material.ambient", glm::vec3(0.3f));
@@ -123,7 +126,7 @@ bool Scene12::Initialize()
 	model->m_shader.SetUniform("light.diffuse", light->m_diffuse);
 	model->m_shader.SetUniform("light.specular", light->m_specular);
 
-	model->m_mesh.Load("..\\Resources\\Meshes\\plane.obj", true);
+	model->m_mesh.Load("..\\Resources\\Meshes\\plane.obj", false);
 	model->m_mesh.BindVertexAttrib(0, Mesh::eVertexType::POSITION);
 	model->m_mesh.BindVertexAttrib(1, Mesh::eVertexType::NORMAL);
 	model->m_mesh.BindVertexAttrib(2, Mesh::eVertexType::TEXCOORD);
@@ -131,7 +134,6 @@ bool Scene12::Initialize()
 	model->m_cameraID = "camera";
 
 	AddObject(model);
-
 
 	model = new Model("debug", this);
 	model->m_transform.m_scale = glm::vec3(1.0f);
@@ -149,11 +151,7 @@ bool Scene12::Initialize()
 	model->m_material.m_specular = glm::vec3(1.0f, 1.0f, 1.0f);
 	model->m_material.m_shine = 0.4f * 128.0f;
 
-	GLuint depthTexture = model->m_material.CreateDepthTexture(SHADOW_BUFFER_WIDTH, SHADOW_BUFFER_HEIGHT);
-	m_depthBuffer = model->m_material.CreateDepthbuffer(depthTexture, SHADOW_BUFFER_WIDTH, SHADOW_BUFFER_HEIGHT);
 	model->m_material.AddTexture(depthTexture, GL_TEXTURE0);
-	//model->m_material.LoadTexture2D("..\\Resources\\Textures\\rocks.jpg", GL_TEXTURE0);
-	//model->m_material.LoadTexture2D("..\\Resources\\Textures\\ogre_normal.bmp", GL_TEXTURE1);
 
 	model->m_shader.SetUniform("material.ambient", glm::vec3(0.3f));
 	model->m_shader.SetUniform("material.diffuse", glm::vec3(0.5f));
@@ -169,7 +167,9 @@ bool Scene12::Initialize()
 
 	model->m_cameraID = "camera";
 
-	AddObject(model);
+	m_depthBuffer = model->m_material.CreateDepthbuffer(depthTexture, SHADOW_BUFFER_WIDTH, SHADOW_BUFFER_HEIGHT);
+
+	//AddObject(model);
 
 	m_rotation = 0.0f;
 
@@ -196,13 +196,23 @@ void Scene12::Update()
 
 	glm::vec4 position = camera->GetView() * glm::vec4(light->m_transform.m_position, 1.0f);
 
+	glm::mat4 mxBias(
+		0.5f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.5f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.5f, 0.0f,
+		0.5f, 0.5f, 0.5f, 1.0f
+	);
+
 	auto models = GetObjects<Model>();
 	for (auto model : models)
 	{
 		model->m_shader.Use();
 		model->m_shader.SetUniform("light.position", position);
-		//model->m_shader.SetUniform("lightPosition", position);
+		glm::mat4 mxModel = model->m_transform.GetMatrix44();
+		glm::mat4 mxBVP = mxBias * mxVP * mxModel;
+		model->m_shader.SetUniform("mxMLP", mxBVP);
 	}
+
 
 	auto objects = GetObjects<Object>();
 	for (auto object : objects)
@@ -240,8 +250,8 @@ void Scene12::Render()
 	glViewport(0, 0, m_engine->Get<Renderer>()->m_width, m_engine->Get<Renderer>()->m_height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	model = GetObject<Model>("debug");
-	model->Render();
+	//model = GetObject<Model>("debug");
+	//model->Render();
 
 	auto renderables = GetObjects<Renderable>();
 	for (auto renderable : renderables)

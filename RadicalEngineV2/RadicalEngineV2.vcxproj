@@ -250,6 +250,8 @@
     <None Include="..\Resources\Shaders\shadow_depth.vs" />
     <None Include="..\Resources\Shaders\shadow_depth_debug.fs" />
     <None Include="..\Resources\Shaders\shadow_depth_debug.vs" />
+    <None Include="..\Resources\Shaders\shadow_phong.fs" />
+    <None Include="..\Resources\Shaders\shadow_phong.vs" />
     <None Include="..\Resources\Shaders\texturedphong.fs" />
     <None Include="..\Resources\Shaders\texturedphong.vs" />
     <None Include="..\Resources\Shaders\texturedphong_directional.fs" />

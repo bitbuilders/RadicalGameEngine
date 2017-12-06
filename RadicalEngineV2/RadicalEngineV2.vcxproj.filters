@@ -132,6 +132,9 @@
     <ClInclude Include="scene11.h">
       <Filter>Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="scene12.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -224,6 +227,9 @@
     <ClCompile Include="scene11.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="scene12.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Resources\Shaders\basic.fs">
@@ -290,6 +296,18 @@
       <Filter>Resource Files\Resources\Shaders</Filter>
     </None>
     <None Include="..\Resources\Shaders\texturedphong_normalmap.vs">
+      <Filter>Resource Files\Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Resources\Shaders\shadow_depth.vs">
+      <Filter>Resource Files\Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Resources\Shaders\shadow_depth.fs">
+      <Filter>Resource Files\Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Resources\Shaders\shadow_depth_debug.vs">
+      <Filter>Resource Files\Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Resources\Shaders\shadow_depth_debug.fs">
       <Filter>Resource Files\Resources\Shaders</Filter>
     </None>
   </ItemGroup>
